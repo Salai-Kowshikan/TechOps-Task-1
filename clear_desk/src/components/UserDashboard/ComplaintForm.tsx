@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 import { complaintFormSchema } from "@/lib/validation";
 import {
   Sheet,
@@ -30,6 +31,31 @@ function ComplaintForm() {
   const [description, setDescription] = useState("");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
+  const mutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const response = await fetch("/api/complaint", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error("Failed to submit complaint");
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Complaint submitted successfully!");
+      setImages([]);
+      setCategory("");
+      setTitle("");
+      setDescription("");
+      setIsSheetOpen(false);
+    },
+    onError: (error: any) => {
+      console.error("Error submitting complaint:", error);
+      toast.error(error.message || "Failed to submit complaint. Please try again.");
+    },
+  });
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const filesArray = Array.from(event.target.files);
@@ -39,30 +65,29 @@ function ComplaintForm() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const formData = {
+    const formData = new FormData();
+    formData.append("category", category);
+    formData.append("title", title);
+    formData.append("description", description);
+    images.forEach((image, index) => {
+      formData.append(`images[${index}]`, image);
+    });
+
+    const validationResult = complaintFormSchema.safeParse({
       category,
       title,
       description,
       images,
-    };
+    });
 
-    const result = complaintFormSchema.safeParse(formData);
-
-    if (!result.success) {
-      result.error.errors.forEach((error) => {
+    if (!validationResult.success) {
+      validationResult.error.errors.forEach((error) => {
         toast.error(error.message);
       });
       return;
     }
 
-    console.log("Form Data:", formData);
-
-    setImages([]);
-    setCategory("");
-    setTitle("");
-    setDescription("");
-    toast.success("Complaint submitted successfully!");
-    setIsSheetOpen(false);
+    mutation.mutate(formData);
   };
 
   return (
@@ -143,7 +168,9 @@ function ComplaintForm() {
               ))}
             </div>
             <SheetFooter>
-              <Button type="submit">Submit</Button>
+              <Button type="submit" >
+                Submit
+              </Button>
             </SheetFooter>
           </form>
         </SheetContent>
