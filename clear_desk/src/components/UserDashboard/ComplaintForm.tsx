@@ -3,7 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
-import { complaintFormSchema } from "@/lib/validation";
+import { validateComplaintPayload } from "@/lib/validation";
 import {
   Sheet,
   SheetContent,
@@ -31,8 +31,11 @@ function ComplaintForm() {
   const [description, setDescription] = useState("");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
+  const user_id = "8b61d408-50c7-43b9-a5fc-93ec22740cd7";  
+
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
+      console.log("Submitting form data:", formData);
       const response = await fetch("/api/complaint", {
         method: "POST",
         body: formData,
@@ -69,15 +72,27 @@ function ComplaintForm() {
     formData.append("category", category);
     formData.append("title", title);
     formData.append("description", description);
+    formData.append("user_id", user_id);
     images.forEach((image, index) => {
       formData.append(`images[${index}]`, image);
     });
-
-    const validationResult = complaintFormSchema.safeParse({
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
+    }    
+    const validationResult = validateComplaintPayload({
       category,
       title,
       description,
       images,
+      user_id,
+    });
+
+    console.log("Payload being validated:", {
+      category,
+      title,
+      description,
+      images,
+      user_id,
     });
 
     if (!validationResult.success) {

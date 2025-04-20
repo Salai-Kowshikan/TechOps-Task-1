@@ -14,4 +14,10 @@ export const complaintFormSchema = z.object({
     .array(z.instanceof(File))
     .max(5, "You can upload a maximum of 5 images.")
     .optional(),
+  user_id: z.string().nonempty("User ID is required."),
 });
+
+export function validateComplaintPayload(payload: any) {
+  console.log("Validating payload:", payload);
+  return complaintFormSchema.safeParse(payload);
+}
