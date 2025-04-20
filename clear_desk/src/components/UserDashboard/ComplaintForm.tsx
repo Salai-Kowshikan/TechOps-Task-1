@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { validateComplaintPayload } from "@/lib/validation";
 import {
   Sheet,
@@ -23,8 +23,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PlusIcon } from "lucide-react";
 
 function ComplaintForm() {
+  const queryClient = useQueryClient();
   const [images, setImages] = useState<File[]>([]);
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
@@ -47,6 +49,7 @@ function ComplaintForm() {
     },
     onSuccess: (data) => {
       toast.success(data.message || "Complaint submitted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["complaints", user_id] }); 
       setImages([]);
       setCategory("");
       setTitle("");
@@ -109,7 +112,7 @@ function ComplaintForm() {
     <div>
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild>
-          <Button onClick={() => setIsSheetOpen(true)}>Open</Button>
+          <Button onClick={() => setIsSheetOpen(true)}> <PlusIcon /> File a new complaint </Button>
         </SheetTrigger>
         <SheetContent className="max-h-[100vh] overflow-y-auto">
           <SheetHeader>
