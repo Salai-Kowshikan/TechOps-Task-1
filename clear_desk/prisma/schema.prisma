@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output = "../src/lib/prisma"
+  output   = "../src/lib/prisma"
 }
 
 datasource db {
@@ -25,23 +25,23 @@ model admin {
 model complaint_responses {
   id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at   DateTime    @default(now()) @db.Timestamptz(6)
-  complaint_id String?     @db.Uuid
+  complaint_id String?     @unique(map: "complaint_id_unique") @db.Uuid
   responses    Json[]      @db.Json
   complaints   complaints? @relation(fields: [complaint_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model complaints {
-  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at          DateTime             @default(now()) @db.Timestamptz(6)
   title               String
   description         String?
   image_url           String[]
   category            String
   status              String
-  user_id             String?               @db.Uuid
-  complaint_responses complaint_responses[]
-  users               users?                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_id             String?              @db.Uuid
+  complaint_responses complaint_responses?
+  users               users?               @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
