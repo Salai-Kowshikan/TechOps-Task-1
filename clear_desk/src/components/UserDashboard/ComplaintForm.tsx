@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { toast } from "sonner";
+import { complaintFormSchema } from "@/lib/validation";
 import {
   Sheet,
   SheetContent,
@@ -8,7 +10,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
 import {
@@ -27,6 +28,7 @@ function ComplaintForm() {
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -37,41 +39,50 @@ function ComplaintForm() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const formData = new FormData();
-    formData.append("category", category);
-    formData.append("title", title);
-    formData.append("description", description);
-    images.forEach((image, index) => {
-      formData.append(`images[${index}]`, image);
-    });
+    const formData = {
+      category,
+      title,
+      description,
+      images,
+    };
 
-    console.log("Form Data:");
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
+    const result = complaintFormSchema.safeParse(formData);
+
+    if (!result.success) {
+      result.error.errors.forEach((error) => {
+        toast.error(error.message);
+      });
+      return;
     }
+
+    console.log("Form Data:", formData);
 
     setImages([]);
     setCategory("");
     setTitle("");
     setDescription("");
+    toast.success("Complaint submitted successfully!");
+    setIsSheetOpen(false);
   };
 
   return (
     <div>
-      <Sheet>
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild>
-          <Button>Open</Button>
+          <Button onClick={() => setIsSheetOpen(true)}>Open</Button>
         </SheetTrigger>
-        <SheetContent>
+        <SheetContent className="max-h-[100vh] overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Raise a Complaint</SheetTitle>
             <SheetDescription>
               Please fill out the form below to raise a complaint.
             </SheetDescription>
           </SheetHeader>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <Label htmlFor="complaint">Category: </Label>
+          <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="complaint" className="font-bold text-lg">
+                Category:
+              </Label>
               <Select onValueChange={(value) => setCategory(value)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a category" />
@@ -84,8 +95,10 @@ function ComplaintForm() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label htmlFor="title">Title: </Label>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="title" className="font-bold text-lg">
+                Title:
+              </Label>
               <Input
                 id="title"
                 placeholder="Title here"
@@ -93,8 +106,8 @@ function ComplaintForm() {
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
-            <div>
-              <Label htmlFor="description">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="description" className="font-bold text-lg">
                 Describe your issue in detail ( Max 200 words )
               </Label>
               <Input
@@ -104,8 +117,10 @@ function ComplaintForm() {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </div>
-            <div>
-              <Label htmlFor="images">Attach images</Label>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="images" className="font-bold text-lg">
+                Attach images
+              </Label>
               <Input
                 id="images"
                 type="file"
@@ -128,9 +143,7 @@ function ComplaintForm() {
               ))}
             </div>
             <SheetFooter>
-              <SheetClose asChild>
-                <Button type="submit">Submit</Button>
-              </SheetClose>
+              <Button type="submit">Submit</Button>
             </SheetFooter>
           </form>
         </SheetContent>
