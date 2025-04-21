@@ -29,7 +29,7 @@ export default function AdminDashboard() {
   const { data: complaints = [], isLoading } = useQuery<Complaint[]>({
     queryKey: ['complaints'],
     queryFn: async () => {
-      const res = await axios.get(`/api/complaint`)
+      const res = await axios.get(`/api/complaint/admin`)
       return res.data
     }
   })
