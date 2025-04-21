@@ -1,4 +1,6 @@
-
+"use client"
+import { useAdminStore } from "@/Store/useAdminStore";
+import { useEffect } from "react";
 import Hero from "@/components/Landing/Hero";
 import Features from "@/components/Landing/Features";
 
