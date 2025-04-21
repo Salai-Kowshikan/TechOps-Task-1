@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useEffect } from "react"
-import { useAdminStore } from "@/lib/zustand/useAdminStore"
+import { useAdminStore } from "@/Store/useAdminStore"
 
 export default function Home() {
   const setIsSuperAdmin = useAdminStore((state) => state.setIsSuperAdmin)
