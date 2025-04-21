@@ -34,9 +34,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Navbar />
+          <QueryProvider>
             {children}
-            <Footer />
+            <Toaster expand={true} position="bottom-left" richColors />
+          </QueryProvider>
         </ThemeProvider>
 
       </body>
