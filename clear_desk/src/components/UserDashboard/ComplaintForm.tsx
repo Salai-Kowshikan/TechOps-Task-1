@@ -31,7 +31,7 @@ function ComplaintForm() {
   const [description, setDescription] = useState("");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const user_id = "8b61d408-50c7-43b9-a5fc-93ec22740cd7";  
+  const user_id = "8b61d408-50c7-43b9-a5fc-93ec22740cd7";
 
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
@@ -78,7 +78,7 @@ function ComplaintForm() {
     });
     for (let pair of formData.entries()) {
       console.log(pair[0] + ": " + pair[1]);
-    }    
+    }
     const validationResult = validateComplaintPayload({
       category,
       title,
@@ -128,7 +128,7 @@ function ComplaintForm() {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="accomodation">Accomodation</SelectItem>
+                  <SelectItem value="accommodation">Accommodation</SelectItem>
                   <SelectItem value="events">Events</SelectItem>
                   <SelectItem value="payments">Payments</SelectItem>
                   <SelectItem value="others">Others</SelectItem>
