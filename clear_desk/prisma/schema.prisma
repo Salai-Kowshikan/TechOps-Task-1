@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "../src/lib/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model admin {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  name       String
+  ph_number  String
+  email      String   @unique
+  password   String?
+  token      String?
+  is_admin   Boolean  @default(false)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model complaint_responses {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at   DateTime    @default(now()) @db.Timestamptz(6)
+  complaint_id String?     @db.Uuid
+  responses    Json[]      @db.Json
+  complaints   complaints? @relation(fields: [complaint_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model complaints {
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  title               String
+  description         String?
+  image_url           String[]
+  category            String
+  status              String
+  user_id             String?               @db.Uuid
+  complaint_responses complaint_responses[]
+  users               users?                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model users {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at DateTime     @default(now()) @db.Timestamptz(6)
+  name       String
+  ph_number  String
+  email      String       @unique
+  password   String?
+  token      String?
+  complaints complaints[]
+}
