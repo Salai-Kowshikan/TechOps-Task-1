@@ -14,8 +14,14 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
- * Model admin
+ * Model access_levels
+ * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
  * This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+ */
+export type access_levels = $Result.DefaultSelection<Prisma.$access_levelsPayload>
+/**
+ * Model admin
+ * 
  */
 export type admin = $Result.DefaultSelection<Prisma.$adminPayload>
 /**
@@ -41,8 +47,8 @@ export type users = $Result.DefaultSelection<Prisma.$usersPayload>
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Admins
- * const admins = await prisma.admin.findMany()
+ * // Fetch zero or more Access_levels
+ * const access_levels = await prisma.access_levels.findMany()
  * ```
  *
  *
@@ -62,8 +68,8 @@ export class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Admins
-   * const admins = await prisma.admin.findMany()
+   * // Fetch zero or more Access_levels
+   * const access_levels = await prisma.access_levels.findMany()
    * ```
    *
    *
@@ -160,6 +166,16 @@ export class PrismaClient<
   }>>
 
       /**
+   * `prisma.access_levels`: Exposes CRUD operations for the **access_levels** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Access_levels
+    * const access_levels = await prisma.access_levels.findMany()
+    * ```
+    */
+  get access_levels(): Prisma.access_levelsDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.admin`: Exposes CRUD operations for the **admin** model.
     * Example usage:
     * ```ts
@@ -257,7 +273,7 @@ export namespace Prisma {
 
   /**
    * Prisma Client JS version: 6.6.0
-   * Query Engine version: acc0b9dd43eb689cbd20c9470515d719db10d0b0
+   * Query Engine version: f676762280b54cd07c770017ed3711ddde35f37a
    */
   export type PrismaVersion = {
     client: string
@@ -638,6 +654,7 @@ export namespace Prisma {
 
 
   export const ModelName: {
+    access_levels: 'access_levels',
     admin: 'admin',
     complaint_responses: 'complaint_responses',
     complaints: 'complaints',
@@ -660,10 +677,84 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "admin" | "complaint_responses" | "complaints" | "users"
+      modelProps: "access_levels" | "admin" | "complaint_responses" | "complaints" | "users"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
+      access_levels: {
+        payload: Prisma.$access_levelsPayload<ExtArgs>
+        fields: Prisma.access_levelsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.access_levelsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.access_levelsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload>
+          }
+          findFirst: {
+            args: Prisma.access_levelsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.access_levelsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload>
+          }
+          findMany: {
+            args: Prisma.access_levelsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload>[]
+          }
+          create: {
+            args: Prisma.access_levelsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload>
+          }
+          createMany: {
+            args: Prisma.access_levelsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.access_levelsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload>[]
+          }
+          delete: {
+            args: Prisma.access_levelsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload>
+          }
+          update: {
+            args: Prisma.access_levelsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload>
+          }
+          deleteMany: {
+            args: Prisma.access_levelsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.access_levelsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.access_levelsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload>[]
+          }
+          upsert: {
+            args: Prisma.access_levelsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$access_levelsPayload>
+          }
+          aggregate: {
+            args: Prisma.Access_levelsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAccess_levels>
+          }
+          groupBy: {
+            args: Prisma.access_levelsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Access_levelsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.access_levelsCountArgs<ExtArgs>
+            result: $Utils.Optional<Access_levelsCountAggregateOutputType> | number
+          }
+        }
+      }
       admin: {
         payload: Prisma.$adminPayload<ExtArgs>
         fields: Prisma.adminFieldRefs
@@ -1044,6 +1135,7 @@ export namespace Prisma {
     omit?: Prisma.GlobalOmitConfig
   }
   export type GlobalOmitConfig = {
+    access_levels?: access_levelsOmit
     admin?: adminOmit
     complaint_responses?: complaint_responsesOmit
     complaints?: complaintsOmit
@@ -1138,37 +1230,6 @@ export namespace Prisma {
 
 
   /**
-   * Count Type ComplaintsCountOutputType
-   */
-
-  export type ComplaintsCountOutputType = {
-    complaint_responses: number
-  }
-
-  export type ComplaintsCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    complaint_responses?: boolean | ComplaintsCountOutputTypeCountComplaint_responsesArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * ComplaintsCountOutputType without action
-   */
-  export type ComplaintsCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ComplaintsCountOutputType
-     */
-    select?: ComplaintsCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * ComplaintsCountOutputType without action
-   */
-  export type ComplaintsCountOutputTypeCountComplaint_responsesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: complaint_responsesWhereInput
-  }
-
-
-  /**
    * Count Type UsersCountOutputType
    */
 
@@ -1202,6 +1263,1064 @@ export namespace Prisma {
   /**
    * Models
    */
+
+  /**
+   * Model access_levels
+   */
+
+  export type AggregateAccess_levels = {
+    _count: Access_levelsCountAggregateOutputType | null
+    _min: Access_levelsMinAggregateOutputType | null
+    _max: Access_levelsMaxAggregateOutputType | null
+  }
+
+  export type Access_levelsMinAggregateOutputType = {
+    id: string | null
+    accommodation: string | null
+    payments: string | null
+    events: string | null
+    others: string | null
+  }
+
+  export type Access_levelsMaxAggregateOutputType = {
+    id: string | null
+    accommodation: string | null
+    payments: string | null
+    events: string | null
+    others: string | null
+  }
+
+  export type Access_levelsCountAggregateOutputType = {
+    id: number
+    accommodation: number
+    payments: number
+    events: number
+    others: number
+    _all: number
+  }
+
+
+  export type Access_levelsMinAggregateInputType = {
+    id?: true
+    accommodation?: true
+    payments?: true
+    events?: true
+    others?: true
+  }
+
+  export type Access_levelsMaxAggregateInputType = {
+    id?: true
+    accommodation?: true
+    payments?: true
+    events?: true
+    others?: true
+  }
+
+  export type Access_levelsCountAggregateInputType = {
+    id?: true
+    accommodation?: true
+    payments?: true
+    events?: true
+    others?: true
+    _all?: true
+  }
+
+  export type Access_levelsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which access_levels to aggregate.
+     */
+    where?: access_levelsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of access_levels to fetch.
+     */
+    orderBy?: access_levelsOrderByWithRelationInput | access_levelsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: access_levelsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` access_levels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` access_levels.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned access_levels
+    **/
+    _count?: true | Access_levelsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Access_levelsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Access_levelsMaxAggregateInputType
+  }
+
+  export type GetAccess_levelsAggregateType<T extends Access_levelsAggregateArgs> = {
+        [P in keyof T & keyof AggregateAccess_levels]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAccess_levels[P]>
+      : GetScalarType<T[P], AggregateAccess_levels[P]>
+  }
+
+
+
+
+  export type access_levelsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: access_levelsWhereInput
+    orderBy?: access_levelsOrderByWithAggregationInput | access_levelsOrderByWithAggregationInput[]
+    by: Access_levelsScalarFieldEnum[] | Access_levelsScalarFieldEnum
+    having?: access_levelsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Access_levelsCountAggregateInputType | true
+    _min?: Access_levelsMinAggregateInputType
+    _max?: Access_levelsMaxAggregateInputType
+  }
+
+  export type Access_levelsGroupByOutputType = {
+    id: string
+    accommodation: string | null
+    payments: string | null
+    events: string | null
+    others: string | null
+    _count: Access_levelsCountAggregateOutputType | null
+    _min: Access_levelsMinAggregateOutputType | null
+    _max: Access_levelsMaxAggregateOutputType | null
+  }
+
+  type GetAccess_levelsGroupByPayload<T extends access_levelsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Access_levelsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Access_levelsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Access_levelsGroupByOutputType[P]>
+            : GetScalarType<T[P], Access_levelsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type access_levelsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    accommodation?: boolean
+    payments?: boolean
+    events?: boolean
+    others?: boolean
+    admin?: boolean | adminDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["access_levels"]>
+
+  export type access_levelsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    accommodation?: boolean
+    payments?: boolean
+    events?: boolean
+    others?: boolean
+    admin?: boolean | adminDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["access_levels"]>
+
+  export type access_levelsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    accommodation?: boolean
+    payments?: boolean
+    events?: boolean
+    others?: boolean
+    admin?: boolean | adminDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["access_levels"]>
+
+  export type access_levelsSelectScalar = {
+    id?: boolean
+    accommodation?: boolean
+    payments?: boolean
+    events?: boolean
+    others?: boolean
+  }
+
+  export type access_levelsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "accommodation" | "payments" | "events" | "others", ExtArgs["result"]["access_levels"]>
+  export type access_levelsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | adminDefaultArgs<ExtArgs>
+  }
+  export type access_levelsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | adminDefaultArgs<ExtArgs>
+  }
+  export type access_levelsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | adminDefaultArgs<ExtArgs>
+  }
+
+  export type $access_levelsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "access_levels"
+    objects: {
+      admin: Prisma.$adminPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      accommodation: string | null
+      payments: string | null
+      events: string | null
+      others: string | null
+    }, ExtArgs["result"]["access_levels"]>
+    composites: {}
+  }
+
+  type access_levelsGetPayload<S extends boolean | null | undefined | access_levelsDefaultArgs> = $Result.GetResult<Prisma.$access_levelsPayload, S>
+
+  type access_levelsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<access_levelsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Access_levelsCountAggregateInputType | true
+    }
+
+  export interface access_levelsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['access_levels'], meta: { name: 'access_levels' } }
+    /**
+     * Find zero or one Access_levels that matches the filter.
+     * @param {access_levelsFindUniqueArgs} args - Arguments to find a Access_levels
+     * @example
+     * // Get one Access_levels
+     * const access_levels = await prisma.access_levels.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends access_levelsFindUniqueArgs>(args: SelectSubset<T, access_levelsFindUniqueArgs<ExtArgs>>): Prisma__access_levelsClient<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Access_levels that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {access_levelsFindUniqueOrThrowArgs} args - Arguments to find a Access_levels
+     * @example
+     * // Get one Access_levels
+     * const access_levels = await prisma.access_levels.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends access_levelsFindUniqueOrThrowArgs>(args: SelectSubset<T, access_levelsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__access_levelsClient<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Access_levels that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {access_levelsFindFirstArgs} args - Arguments to find a Access_levels
+     * @example
+     * // Get one Access_levels
+     * const access_levels = await prisma.access_levels.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends access_levelsFindFirstArgs>(args?: SelectSubset<T, access_levelsFindFirstArgs<ExtArgs>>): Prisma__access_levelsClient<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Access_levels that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {access_levelsFindFirstOrThrowArgs} args - Arguments to find a Access_levels
+     * @example
+     * // Get one Access_levels
+     * const access_levels = await prisma.access_levels.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends access_levelsFindFirstOrThrowArgs>(args?: SelectSubset<T, access_levelsFindFirstOrThrowArgs<ExtArgs>>): Prisma__access_levelsClient<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Access_levels that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {access_levelsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Access_levels
+     * const access_levels = await prisma.access_levels.findMany()
+     * 
+     * // Get first 10 Access_levels
+     * const access_levels = await prisma.access_levels.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const access_levelsWithIdOnly = await prisma.access_levels.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends access_levelsFindManyArgs>(args?: SelectSubset<T, access_levelsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Access_levels.
+     * @param {access_levelsCreateArgs} args - Arguments to create a Access_levels.
+     * @example
+     * // Create one Access_levels
+     * const Access_levels = await prisma.access_levels.create({
+     *   data: {
+     *     // ... data to create a Access_levels
+     *   }
+     * })
+     * 
+     */
+    create<T extends access_levelsCreateArgs>(args: SelectSubset<T, access_levelsCreateArgs<ExtArgs>>): Prisma__access_levelsClient<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Access_levels.
+     * @param {access_levelsCreateManyArgs} args - Arguments to create many Access_levels.
+     * @example
+     * // Create many Access_levels
+     * const access_levels = await prisma.access_levels.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends access_levelsCreateManyArgs>(args?: SelectSubset<T, access_levelsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Access_levels and returns the data saved in the database.
+     * @param {access_levelsCreateManyAndReturnArgs} args - Arguments to create many Access_levels.
+     * @example
+     * // Create many Access_levels
+     * const access_levels = await prisma.access_levels.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Access_levels and only return the `id`
+     * const access_levelsWithIdOnly = await prisma.access_levels.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends access_levelsCreateManyAndReturnArgs>(args?: SelectSubset<T, access_levelsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Access_levels.
+     * @param {access_levelsDeleteArgs} args - Arguments to delete one Access_levels.
+     * @example
+     * // Delete one Access_levels
+     * const Access_levels = await prisma.access_levels.delete({
+     *   where: {
+     *     // ... filter to delete one Access_levels
+     *   }
+     * })
+     * 
+     */
+    delete<T extends access_levelsDeleteArgs>(args: SelectSubset<T, access_levelsDeleteArgs<ExtArgs>>): Prisma__access_levelsClient<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Access_levels.
+     * @param {access_levelsUpdateArgs} args - Arguments to update one Access_levels.
+     * @example
+     * // Update one Access_levels
+     * const access_levels = await prisma.access_levels.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends access_levelsUpdateArgs>(args: SelectSubset<T, access_levelsUpdateArgs<ExtArgs>>): Prisma__access_levelsClient<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Access_levels.
+     * @param {access_levelsDeleteManyArgs} args - Arguments to filter Access_levels to delete.
+     * @example
+     * // Delete a few Access_levels
+     * const { count } = await prisma.access_levels.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends access_levelsDeleteManyArgs>(args?: SelectSubset<T, access_levelsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Access_levels.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {access_levelsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Access_levels
+     * const access_levels = await prisma.access_levels.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends access_levelsUpdateManyArgs>(args: SelectSubset<T, access_levelsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Access_levels and returns the data updated in the database.
+     * @param {access_levelsUpdateManyAndReturnArgs} args - Arguments to update many Access_levels.
+     * @example
+     * // Update many Access_levels
+     * const access_levels = await prisma.access_levels.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Access_levels and only return the `id`
+     * const access_levelsWithIdOnly = await prisma.access_levels.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends access_levelsUpdateManyAndReturnArgs>(args: SelectSubset<T, access_levelsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Access_levels.
+     * @param {access_levelsUpsertArgs} args - Arguments to update or create a Access_levels.
+     * @example
+     * // Update or create a Access_levels
+     * const access_levels = await prisma.access_levels.upsert({
+     *   create: {
+     *     // ... data to create a Access_levels
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Access_levels we want to update
+     *   }
+     * })
+     */
+    upsert<T extends access_levelsUpsertArgs>(args: SelectSubset<T, access_levelsUpsertArgs<ExtArgs>>): Prisma__access_levelsClient<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Access_levels.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {access_levelsCountArgs} args - Arguments to filter Access_levels to count.
+     * @example
+     * // Count the number of Access_levels
+     * const count = await prisma.access_levels.count({
+     *   where: {
+     *     // ... the filter for the Access_levels we want to count
+     *   }
+     * })
+    **/
+    count<T extends access_levelsCountArgs>(
+      args?: Subset<T, access_levelsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Access_levelsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Access_levels.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Access_levelsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Access_levelsAggregateArgs>(args: Subset<T, Access_levelsAggregateArgs>): Prisma.PrismaPromise<GetAccess_levelsAggregateType<T>>
+
+    /**
+     * Group by Access_levels.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {access_levelsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends access_levelsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: access_levelsGroupByArgs['orderBy'] }
+        : { orderBy?: access_levelsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, access_levelsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAccess_levelsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the access_levels model
+   */
+  readonly fields: access_levelsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for access_levels.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__access_levelsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    admin<T extends adminDefaultArgs<ExtArgs> = {}>(args?: Subset<T, adminDefaultArgs<ExtArgs>>): Prisma__adminClient<$Result.GetResult<Prisma.$adminPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the access_levels model
+   */
+  interface access_levelsFieldRefs {
+    readonly id: FieldRef<"access_levels", 'String'>
+    readonly accommodation: FieldRef<"access_levels", 'String'>
+    readonly payments: FieldRef<"access_levels", 'String'>
+    readonly events: FieldRef<"access_levels", 'String'>
+    readonly others: FieldRef<"access_levels", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * access_levels findUnique
+   */
+  export type access_levelsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+    /**
+     * Filter, which access_levels to fetch.
+     */
+    where: access_levelsWhereUniqueInput
+  }
+
+  /**
+   * access_levels findUniqueOrThrow
+   */
+  export type access_levelsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+    /**
+     * Filter, which access_levels to fetch.
+     */
+    where: access_levelsWhereUniqueInput
+  }
+
+  /**
+   * access_levels findFirst
+   */
+  export type access_levelsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+    /**
+     * Filter, which access_levels to fetch.
+     */
+    where?: access_levelsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of access_levels to fetch.
+     */
+    orderBy?: access_levelsOrderByWithRelationInput | access_levelsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for access_levels.
+     */
+    cursor?: access_levelsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` access_levels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` access_levels.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of access_levels.
+     */
+    distinct?: Access_levelsScalarFieldEnum | Access_levelsScalarFieldEnum[]
+  }
+
+  /**
+   * access_levels findFirstOrThrow
+   */
+  export type access_levelsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+    /**
+     * Filter, which access_levels to fetch.
+     */
+    where?: access_levelsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of access_levels to fetch.
+     */
+    orderBy?: access_levelsOrderByWithRelationInput | access_levelsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for access_levels.
+     */
+    cursor?: access_levelsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` access_levels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` access_levels.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of access_levels.
+     */
+    distinct?: Access_levelsScalarFieldEnum | Access_levelsScalarFieldEnum[]
+  }
+
+  /**
+   * access_levels findMany
+   */
+  export type access_levelsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+    /**
+     * Filter, which access_levels to fetch.
+     */
+    where?: access_levelsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of access_levels to fetch.
+     */
+    orderBy?: access_levelsOrderByWithRelationInput | access_levelsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing access_levels.
+     */
+    cursor?: access_levelsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` access_levels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` access_levels.
+     */
+    skip?: number
+    distinct?: Access_levelsScalarFieldEnum | Access_levelsScalarFieldEnum[]
+  }
+
+  /**
+   * access_levels create
+   */
+  export type access_levelsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a access_levels.
+     */
+    data: XOR<access_levelsCreateInput, access_levelsUncheckedCreateInput>
+  }
+
+  /**
+   * access_levels createMany
+   */
+  export type access_levelsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many access_levels.
+     */
+    data: access_levelsCreateManyInput | access_levelsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * access_levels createManyAndReturn
+   */
+  export type access_levelsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * The data used to create many access_levels.
+     */
+    data: access_levelsCreateManyInput | access_levelsCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * access_levels update
+   */
+  export type access_levelsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a access_levels.
+     */
+    data: XOR<access_levelsUpdateInput, access_levelsUncheckedUpdateInput>
+    /**
+     * Choose, which access_levels to update.
+     */
+    where: access_levelsWhereUniqueInput
+  }
+
+  /**
+   * access_levels updateMany
+   */
+  export type access_levelsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update access_levels.
+     */
+    data: XOR<access_levelsUpdateManyMutationInput, access_levelsUncheckedUpdateManyInput>
+    /**
+     * Filter which access_levels to update
+     */
+    where?: access_levelsWhereInput
+    /**
+     * Limit how many access_levels to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * access_levels updateManyAndReturn
+   */
+  export type access_levelsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * The data used to update access_levels.
+     */
+    data: XOR<access_levelsUpdateManyMutationInput, access_levelsUncheckedUpdateManyInput>
+    /**
+     * Filter which access_levels to update
+     */
+    where?: access_levelsWhereInput
+    /**
+     * Limit how many access_levels to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * access_levels upsert
+   */
+  export type access_levelsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the access_levels to update in case it exists.
+     */
+    where: access_levelsWhereUniqueInput
+    /**
+     * In case the access_levels found by the `where` argument doesn't exist, create a new access_levels with this data.
+     */
+    create: XOR<access_levelsCreateInput, access_levelsUncheckedCreateInput>
+    /**
+     * In case the access_levels was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<access_levelsUpdateInput, access_levelsUncheckedUpdateInput>
+  }
+
+  /**
+   * access_levels delete
+   */
+  export type access_levelsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+    /**
+     * Filter which access_levels to delete.
+     */
+    where: access_levelsWhereUniqueInput
+  }
+
+  /**
+   * access_levels deleteMany
+   */
+  export type access_levelsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which access_levels to delete
+     */
+    where?: access_levelsWhereInput
+    /**
+     * Limit how many access_levels to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * access_levels without action
+   */
+  export type access_levelsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+  }
+
 
   /**
    * Model admin
@@ -1391,6 +2510,7 @@ export namespace Prisma {
     password?: boolean
     token?: boolean
     is_admin?: boolean
+    access_levels?: boolean | admin$access_levelsArgs<ExtArgs>
   }, ExtArgs["result"]["admin"]>
 
   export type adminSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1427,10 +2547,17 @@ export namespace Prisma {
   }
 
   export type adminOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "created_at" | "name" | "ph_number" | "email" | "password" | "token" | "is_admin", ExtArgs["result"]["admin"]>
+  export type adminInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    access_levels?: boolean | admin$access_levelsArgs<ExtArgs>
+  }
+  export type adminIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type adminIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $adminPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "admin"
-    objects: {}
+    objects: {
+      access_levels: Prisma.$access_levelsPayload<ExtArgs> | null
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       created_at: Date
@@ -1834,6 +2961,7 @@ export namespace Prisma {
    */
   export interface Prisma__adminClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    access_levels<T extends admin$access_levelsArgs<ExtArgs> = {}>(args?: Subset<T, admin$access_levelsArgs<ExtArgs>>): Prisma__access_levelsClient<$Result.GetResult<Prisma.$access_levelsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1888,6 +3016,10 @@ export namespace Prisma {
      */
     omit?: adminOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: adminInclude<ExtArgs> | null
+    /**
      * Filter, which admin to fetch.
      */
     where: adminWhereUniqueInput
@@ -1906,6 +3038,10 @@ export namespace Prisma {
      */
     omit?: adminOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: adminInclude<ExtArgs> | null
+    /**
      * Filter, which admin to fetch.
      */
     where: adminWhereUniqueInput
@@ -1923,6 +3059,10 @@ export namespace Prisma {
      * Omit specific fields from the admin
      */
     omit?: adminOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: adminInclude<ExtArgs> | null
     /**
      * Filter, which admin to fetch.
      */
@@ -1972,6 +3112,10 @@ export namespace Prisma {
      */
     omit?: adminOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: adminInclude<ExtArgs> | null
+    /**
      * Filter, which admin to fetch.
      */
     where?: adminWhereInput
@@ -2020,6 +3164,10 @@ export namespace Prisma {
      */
     omit?: adminOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: adminInclude<ExtArgs> | null
+    /**
      * Filter, which admins to fetch.
      */
     where?: adminWhereInput
@@ -2062,6 +3210,10 @@ export namespace Prisma {
      * Omit specific fields from the admin
      */
     omit?: adminOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: adminInclude<ExtArgs> | null
     /**
      * The data needed to create a admin.
      */
@@ -2110,6 +3262,10 @@ export namespace Prisma {
      * Omit specific fields from the admin
      */
     omit?: adminOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: adminInclude<ExtArgs> | null
     /**
      * The data needed to update a admin.
      */
@@ -2177,6 +3333,10 @@ export namespace Prisma {
      */
     omit?: adminOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: adminInclude<ExtArgs> | null
+    /**
      * The filter to search for the admin to update in case it exists.
      */
     where: adminWhereUniqueInput
@@ -2203,6 +3363,10 @@ export namespace Prisma {
      */
     omit?: adminOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: adminInclude<ExtArgs> | null
+    /**
      * Filter which admin to delete.
      */
     where: adminWhereUniqueInput
@@ -2223,6 +3387,25 @@ export namespace Prisma {
   }
 
   /**
+   * admin.access_levels
+   */
+  export type admin$access_levelsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the access_levels
+     */
+    select?: access_levelsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the access_levels
+     */
+    omit?: access_levelsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: access_levelsInclude<ExtArgs> | null
+    where?: access_levelsWhereInput
+  }
+
+  /**
    * admin without action
    */
   export type adminDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2234,6 +3417,10 @@ export namespace Prisma {
      * Omit specific fields from the admin
      */
     omit?: adminOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: adminInclude<ExtArgs> | null
   }
 
 
@@ -3483,7 +4670,6 @@ export namespace Prisma {
     user_id?: boolean
     complaint_responses?: boolean | complaints$complaint_responsesArgs<ExtArgs>
     users?: boolean | complaints$usersArgs<ExtArgs>
-    _count?: boolean | ComplaintsCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["complaints"]>
 
   export type complaintsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3525,7 +4711,6 @@ export namespace Prisma {
   export type complaintsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     complaint_responses?: boolean | complaints$complaint_responsesArgs<ExtArgs>
     users?: boolean | complaints$usersArgs<ExtArgs>
-    _count?: boolean | ComplaintsCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type complaintsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | complaints$usersArgs<ExtArgs>
@@ -3537,7 +4722,7 @@ export namespace Prisma {
   export type $complaintsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "complaints"
     objects: {
-      complaint_responses: Prisma.$complaint_responsesPayload<ExtArgs>[]
+      complaint_responses: Prisma.$complaint_responsesPayload<ExtArgs> | null
       users: Prisma.$usersPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -3943,7 +5128,7 @@ export namespace Prisma {
    */
   export interface Prisma__complaintsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    complaint_responses<T extends complaints$complaint_responsesArgs<ExtArgs> = {}>(args?: Subset<T, complaints$complaint_responsesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$complaint_responsesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    complaint_responses<T extends complaints$complaint_responsesArgs<ExtArgs> = {}>(args?: Subset<T, complaints$complaint_responsesArgs<ExtArgs>>): Prisma__complaint_responsesClient<$Result.GetResult<Prisma.$complaint_responsesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     users<T extends complaints$usersArgs<ExtArgs> = {}>(args?: Subset<T, complaints$usersArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -4394,11 +5579,6 @@ export namespace Prisma {
      */
     include?: complaint_responsesInclude<ExtArgs> | null
     where?: complaint_responsesWhereInput
-    orderBy?: complaint_responsesOrderByWithRelationInput | complaint_responsesOrderByWithRelationInput[]
-    cursor?: complaint_responsesWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Complaint_responsesScalarFieldEnum | Complaint_responsesScalarFieldEnum[]
   }
 
   /**
@@ -5549,6 +6729,17 @@ export namespace Prisma {
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+  export const Access_levelsScalarFieldEnum: {
+    id: 'id',
+    accommodation: 'accommodation',
+    payments: 'payments',
+    events: 'events',
+    others: 'others'
+  };
+
+  export type Access_levelsScalarFieldEnum = (typeof Access_levelsScalarFieldEnum)[keyof typeof Access_levelsScalarFieldEnum]
+
+
   export const AdminScalarFieldEnum: {
     id: 'id',
     created_at: 'created_at',
@@ -5695,6 +6886,61 @@ export namespace Prisma {
    */
 
 
+  export type access_levelsWhereInput = {
+    AND?: access_levelsWhereInput | access_levelsWhereInput[]
+    OR?: access_levelsWhereInput[]
+    NOT?: access_levelsWhereInput | access_levelsWhereInput[]
+    id?: UuidFilter<"access_levels"> | string
+    accommodation?: StringNullableFilter<"access_levels"> | string | null
+    payments?: StringNullableFilter<"access_levels"> | string | null
+    events?: StringNullableFilter<"access_levels"> | string | null
+    others?: StringNullableFilter<"access_levels"> | string | null
+    admin?: XOR<AdminScalarRelationFilter, adminWhereInput>
+  }
+
+  export type access_levelsOrderByWithRelationInput = {
+    id?: SortOrder
+    accommodation?: SortOrderInput | SortOrder
+    payments?: SortOrderInput | SortOrder
+    events?: SortOrderInput | SortOrder
+    others?: SortOrderInput | SortOrder
+    admin?: adminOrderByWithRelationInput
+  }
+
+  export type access_levelsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: access_levelsWhereInput | access_levelsWhereInput[]
+    OR?: access_levelsWhereInput[]
+    NOT?: access_levelsWhereInput | access_levelsWhereInput[]
+    accommodation?: StringNullableFilter<"access_levels"> | string | null
+    payments?: StringNullableFilter<"access_levels"> | string | null
+    events?: StringNullableFilter<"access_levels"> | string | null
+    others?: StringNullableFilter<"access_levels"> | string | null
+    admin?: XOR<AdminScalarRelationFilter, adminWhereInput>
+  }, "id">
+
+  export type access_levelsOrderByWithAggregationInput = {
+    id?: SortOrder
+    accommodation?: SortOrderInput | SortOrder
+    payments?: SortOrderInput | SortOrder
+    events?: SortOrderInput | SortOrder
+    others?: SortOrderInput | SortOrder
+    _count?: access_levelsCountOrderByAggregateInput
+    _max?: access_levelsMaxOrderByAggregateInput
+    _min?: access_levelsMinOrderByAggregateInput
+  }
+
+  export type access_levelsScalarWhereWithAggregatesInput = {
+    AND?: access_levelsScalarWhereWithAggregatesInput | access_levelsScalarWhereWithAggregatesInput[]
+    OR?: access_levelsScalarWhereWithAggregatesInput[]
+    NOT?: access_levelsScalarWhereWithAggregatesInput | access_levelsScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"access_levels"> | string
+    accommodation?: StringNullableWithAggregatesFilter<"access_levels"> | string | null
+    payments?: StringNullableWithAggregatesFilter<"access_levels"> | string | null
+    events?: StringNullableWithAggregatesFilter<"access_levels"> | string | null
+    others?: StringNullableWithAggregatesFilter<"access_levels"> | string | null
+  }
+
   export type adminWhereInput = {
     AND?: adminWhereInput | adminWhereInput[]
     OR?: adminWhereInput[]
@@ -5707,6 +6953,7 @@ export namespace Prisma {
     password?: StringNullableFilter<"admin"> | string | null
     token?: StringNullableFilter<"admin"> | string | null
     is_admin?: BoolFilter<"admin"> | boolean
+    access_levels?: XOR<Access_levelsNullableScalarRelationFilter, access_levelsWhereInput> | null
   }
 
   export type adminOrderByWithRelationInput = {
@@ -5718,6 +6965,7 @@ export namespace Prisma {
     password?: SortOrderInput | SortOrder
     token?: SortOrderInput | SortOrder
     is_admin?: SortOrder
+    access_levels?: access_levelsOrderByWithRelationInput
   }
 
   export type adminWhereUniqueInput = Prisma.AtLeast<{
@@ -5732,6 +6980,7 @@ export namespace Prisma {
     password?: StringNullableFilter<"admin"> | string | null
     token?: StringNullableFilter<"admin"> | string | null
     is_admin?: BoolFilter<"admin"> | boolean
+    access_levels?: XOR<Access_levelsNullableScalarRelationFilter, access_levelsWhereInput> | null
   }, "id" | "email">
 
   export type adminOrderByWithAggregationInput = {
@@ -5783,14 +7032,14 @@ export namespace Prisma {
 
   export type complaint_responsesWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    complaint_id?: string
     AND?: complaint_responsesWhereInput | complaint_responsesWhereInput[]
     OR?: complaint_responsesWhereInput[]
     NOT?: complaint_responsesWhereInput | complaint_responsesWhereInput[]
     created_at?: DateTimeFilter<"complaint_responses"> | Date | string
-    complaint_id?: UuidNullableFilter<"complaint_responses"> | string | null
     responses?: JsonNullableListFilter<"complaint_responses">
     complaints?: XOR<ComplaintsNullableScalarRelationFilter, complaintsWhereInput> | null
-  }, "id">
+  }, "id" | "complaint_id">
 
   export type complaint_responsesOrderByWithAggregationInput = {
     id?: SortOrder
@@ -5824,7 +7073,7 @@ export namespace Prisma {
     category?: StringFilter<"complaints"> | string
     status?: StringFilter<"complaints"> | string
     user_id?: UuidNullableFilter<"complaints"> | string | null
-    complaint_responses?: Complaint_responsesListRelationFilter
+    complaint_responses?: XOR<Complaint_responsesNullableScalarRelationFilter, complaint_responsesWhereInput> | null
     users?: XOR<UsersNullableScalarRelationFilter, usersWhereInput> | null
   }
 
@@ -5837,7 +7086,7 @@ export namespace Prisma {
     category?: SortOrder
     status?: SortOrder
     user_id?: SortOrderInput | SortOrder
-    complaint_responses?: complaint_responsesOrderByRelationAggregateInput
+    complaint_responses?: complaint_responsesOrderByWithRelationInput
     users?: usersOrderByWithRelationInput
   }
 
@@ -5853,7 +7102,7 @@ export namespace Prisma {
     category?: StringFilter<"complaints"> | string
     status?: StringFilter<"complaints"> | string
     user_id?: UuidNullableFilter<"complaints"> | string | null
-    complaint_responses?: Complaint_responsesListRelationFilter
+    complaint_responses?: XOR<Complaint_responsesNullableScalarRelationFilter, complaint_responsesWhereInput> | null
     users?: XOR<UsersNullableScalarRelationFilter, usersWhereInput> | null
   }, "id">
 
@@ -5950,6 +7199,61 @@ export namespace Prisma {
     token?: StringNullableWithAggregatesFilter<"users"> | string | null
   }
 
+  export type access_levelsCreateInput = {
+    accommodation?: string | null
+    payments?: string | null
+    events?: string | null
+    others?: string | null
+    admin: adminCreateNestedOneWithoutAccess_levelsInput
+  }
+
+  export type access_levelsUncheckedCreateInput = {
+    id: string
+    accommodation?: string | null
+    payments?: string | null
+    events?: string | null
+    others?: string | null
+  }
+
+  export type access_levelsUpdateInput = {
+    accommodation?: NullableStringFieldUpdateOperationsInput | string | null
+    payments?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: NullableStringFieldUpdateOperationsInput | string | null
+    others?: NullableStringFieldUpdateOperationsInput | string | null
+    admin?: adminUpdateOneRequiredWithoutAccess_levelsNestedInput
+  }
+
+  export type access_levelsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accommodation?: NullableStringFieldUpdateOperationsInput | string | null
+    payments?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: NullableStringFieldUpdateOperationsInput | string | null
+    others?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type access_levelsCreateManyInput = {
+    id: string
+    accommodation?: string | null
+    payments?: string | null
+    events?: string | null
+    others?: string | null
+  }
+
+  export type access_levelsUpdateManyMutationInput = {
+    accommodation?: NullableStringFieldUpdateOperationsInput | string | null
+    payments?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: NullableStringFieldUpdateOperationsInput | string | null
+    others?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type access_levelsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accommodation?: NullableStringFieldUpdateOperationsInput | string | null
+    payments?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: NullableStringFieldUpdateOperationsInput | string | null
+    others?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type adminCreateInput = {
     id?: string
     created_at?: Date | string
@@ -5959,6 +7263,7 @@ export namespace Prisma {
     password?: string | null
     token?: string | null
     is_admin?: boolean
+    access_levels?: access_levelsCreateNestedOneWithoutAdminInput
   }
 
   export type adminUncheckedCreateInput = {
@@ -5970,6 +7275,7 @@ export namespace Prisma {
     password?: string | null
     token?: string | null
     is_admin?: boolean
+    access_levels?: access_levelsUncheckedCreateNestedOneWithoutAdminInput
   }
 
   export type adminUpdateInput = {
@@ -5981,6 +7287,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     token?: NullableStringFieldUpdateOperationsInput | string | null
     is_admin?: BoolFieldUpdateOperationsInput | boolean
+    access_levels?: access_levelsUpdateOneWithoutAdminNestedInput
   }
 
   export type adminUncheckedUpdateInput = {
@@ -5992,6 +7299,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     token?: NullableStringFieldUpdateOperationsInput | string | null
     is_admin?: BoolFieldUpdateOperationsInput | boolean
+    access_levels?: access_levelsUncheckedUpdateOneWithoutAdminNestedInput
   }
 
   export type adminCreateManyInput = {
@@ -6083,7 +7391,7 @@ export namespace Prisma {
     image_url?: complaintsCreateimage_urlInput | string[]
     category: string
     status: string
-    complaint_responses?: complaint_responsesCreateNestedManyWithoutComplaintsInput
+    complaint_responses?: complaint_responsesCreateNestedOneWithoutComplaintsInput
     users?: usersCreateNestedOneWithoutComplaintsInput
   }
 
@@ -6096,7 +7404,7 @@ export namespace Prisma {
     category: string
     status: string
     user_id?: string | null
-    complaint_responses?: complaint_responsesUncheckedCreateNestedManyWithoutComplaintsInput
+    complaint_responses?: complaint_responsesUncheckedCreateNestedOneWithoutComplaintsInput
   }
 
   export type complaintsUpdateInput = {
@@ -6107,7 +7415,7 @@ export namespace Prisma {
     image_url?: complaintsUpdateimage_urlInput | string[]
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    complaint_responses?: complaint_responsesUpdateManyWithoutComplaintsNestedInput
+    complaint_responses?: complaint_responsesUpdateOneWithoutComplaintsNestedInput
     users?: usersUpdateOneWithoutComplaintsNestedInput
   }
 
@@ -6120,7 +7428,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     user_id?: NullableStringFieldUpdateOperationsInput | string | null
-    complaint_responses?: complaint_responsesUncheckedUpdateManyWithoutComplaintsNestedInput
+    complaint_responses?: complaint_responsesUncheckedUpdateOneWithoutComplaintsNestedInput
   }
 
   export type complaintsCreateManyInput = {
@@ -6241,6 +7549,88 @@ export namespace Prisma {
     not?: NestedUuidFilter<$PrismaModel> | string
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type AdminScalarRelationFilter = {
+    is?: adminWhereInput
+    isNot?: adminWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type access_levelsCountOrderByAggregateInput = {
+    id?: SortOrder
+    accommodation?: SortOrder
+    payments?: SortOrder
+    events?: SortOrder
+    others?: SortOrder
+  }
+
+  export type access_levelsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    accommodation?: SortOrder
+    payments?: SortOrder
+    events?: SortOrder
+    others?: SortOrder
+  }
+
+  export type access_levelsMinOrderByAggregateInput = {
+    id?: SortOrder
+    accommodation?: SortOrder
+    payments?: SortOrder
+    events?: SortOrder
+    others?: SortOrder
+  }
+
+  export type UuidWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -6267,29 +7657,14 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
+  export type Access_levelsNullableScalarRelationFilter = {
+    is?: access_levelsWhereInput | null
+    isNot?: access_levelsWhereInput | null
   }
 
   export type adminCountOrderByAggregateInput = {
@@ -6325,21 +7700,6 @@ export namespace Prisma {
     is_admin?: SortOrder
   }
 
-  export type UuidWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedUuidWithAggregatesFilter<$PrismaModel> | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedStringFilter<$PrismaModel>
-    _max?: NestedStringFilter<$PrismaModel>
-  }
-
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -6370,24 +7730,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -6471,19 +7813,14 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
-  export type Complaint_responsesListRelationFilter = {
-    every?: complaint_responsesWhereInput
-    some?: complaint_responsesWhereInput
-    none?: complaint_responsesWhereInput
+  export type Complaint_responsesNullableScalarRelationFilter = {
+    is?: complaint_responsesWhereInput | null
+    isNot?: complaint_responsesWhereInput | null
   }
 
   export type UsersNullableScalarRelationFilter = {
     is?: usersWhereInput | null
     isNot?: usersWhereInput | null
-  }
-
-  export type complaint_responsesOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type complaintsCountOrderByAggregateInput = {
@@ -6557,20 +7894,66 @@ export namespace Prisma {
     token?: SortOrder
   }
 
-  export type StringFieldUpdateOperationsInput = {
-    set?: string
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
+  export type adminCreateNestedOneWithoutAccess_levelsInput = {
+    create?: XOR<adminCreateWithoutAccess_levelsInput, adminUncheckedCreateWithoutAccess_levelsInput>
+    connectOrCreate?: adminCreateOrConnectWithoutAccess_levelsInput
+    connect?: adminWhereUniqueInput
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
   }
 
+  export type adminUpdateOneRequiredWithoutAccess_levelsNestedInput = {
+    create?: XOR<adminCreateWithoutAccess_levelsInput, adminUncheckedCreateWithoutAccess_levelsInput>
+    connectOrCreate?: adminCreateOrConnectWithoutAccess_levelsInput
+    upsert?: adminUpsertWithoutAccess_levelsInput
+    connect?: adminWhereUniqueInput
+    update?: XOR<XOR<adminUpdateToOneWithWhereWithoutAccess_levelsInput, adminUpdateWithoutAccess_levelsInput>, adminUncheckedUpdateWithoutAccess_levelsInput>
+  }
+
+  export type StringFieldUpdateOperationsInput = {
+    set?: string
+  }
+
+  export type access_levelsCreateNestedOneWithoutAdminInput = {
+    create?: XOR<access_levelsCreateWithoutAdminInput, access_levelsUncheckedCreateWithoutAdminInput>
+    connectOrCreate?: access_levelsCreateOrConnectWithoutAdminInput
+    connect?: access_levelsWhereUniqueInput
+  }
+
+  export type access_levelsUncheckedCreateNestedOneWithoutAdminInput = {
+    create?: XOR<access_levelsCreateWithoutAdminInput, access_levelsUncheckedCreateWithoutAdminInput>
+    connectOrCreate?: access_levelsCreateOrConnectWithoutAdminInput
+    connect?: access_levelsWhereUniqueInput
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
+  }
+
+  export type access_levelsUpdateOneWithoutAdminNestedInput = {
+    create?: XOR<access_levelsCreateWithoutAdminInput, access_levelsUncheckedCreateWithoutAdminInput>
+    connectOrCreate?: access_levelsCreateOrConnectWithoutAdminInput
+    upsert?: access_levelsUpsertWithoutAdminInput
+    disconnect?: access_levelsWhereInput | boolean
+    delete?: access_levelsWhereInput | boolean
+    connect?: access_levelsWhereUniqueInput
+    update?: XOR<XOR<access_levelsUpdateToOneWithWhereWithoutAdminInput, access_levelsUpdateWithoutAdminInput>, access_levelsUncheckedUpdateWithoutAdminInput>
+  }
+
+  export type access_levelsUncheckedUpdateOneWithoutAdminNestedInput = {
+    create?: XOR<access_levelsCreateWithoutAdminInput, access_levelsUncheckedCreateWithoutAdminInput>
+    connectOrCreate?: access_levelsCreateOrConnectWithoutAdminInput
+    upsert?: access_levelsUpsertWithoutAdminInput
+    disconnect?: access_levelsWhereInput | boolean
+    delete?: access_levelsWhereInput | boolean
+    connect?: access_levelsWhereUniqueInput
+    update?: XOR<XOR<access_levelsUpdateToOneWithWhereWithoutAdminInput, access_levelsUpdateWithoutAdminInput>, access_levelsUncheckedUpdateWithoutAdminInput>
   }
 
   export type complaint_responsesCreateresponsesInput = {
@@ -6602,11 +7985,10 @@ export namespace Prisma {
     set: string[]
   }
 
-  export type complaint_responsesCreateNestedManyWithoutComplaintsInput = {
-    create?: XOR<complaint_responsesCreateWithoutComplaintsInput, complaint_responsesUncheckedCreateWithoutComplaintsInput> | complaint_responsesCreateWithoutComplaintsInput[] | complaint_responsesUncheckedCreateWithoutComplaintsInput[]
-    connectOrCreate?: complaint_responsesCreateOrConnectWithoutComplaintsInput | complaint_responsesCreateOrConnectWithoutComplaintsInput[]
-    createMany?: complaint_responsesCreateManyComplaintsInputEnvelope
-    connect?: complaint_responsesWhereUniqueInput | complaint_responsesWhereUniqueInput[]
+  export type complaint_responsesCreateNestedOneWithoutComplaintsInput = {
+    create?: XOR<complaint_responsesCreateWithoutComplaintsInput, complaint_responsesUncheckedCreateWithoutComplaintsInput>
+    connectOrCreate?: complaint_responsesCreateOrConnectWithoutComplaintsInput
+    connect?: complaint_responsesWhereUniqueInput
   }
 
   export type usersCreateNestedOneWithoutComplaintsInput = {
@@ -6615,11 +7997,10 @@ export namespace Prisma {
     connect?: usersWhereUniqueInput
   }
 
-  export type complaint_responsesUncheckedCreateNestedManyWithoutComplaintsInput = {
-    create?: XOR<complaint_responsesCreateWithoutComplaintsInput, complaint_responsesUncheckedCreateWithoutComplaintsInput> | complaint_responsesCreateWithoutComplaintsInput[] | complaint_responsesUncheckedCreateWithoutComplaintsInput[]
-    connectOrCreate?: complaint_responsesCreateOrConnectWithoutComplaintsInput | complaint_responsesCreateOrConnectWithoutComplaintsInput[]
-    createMany?: complaint_responsesCreateManyComplaintsInputEnvelope
-    connect?: complaint_responsesWhereUniqueInput | complaint_responsesWhereUniqueInput[]
+  export type complaint_responsesUncheckedCreateNestedOneWithoutComplaintsInput = {
+    create?: XOR<complaint_responsesCreateWithoutComplaintsInput, complaint_responsesUncheckedCreateWithoutComplaintsInput>
+    connectOrCreate?: complaint_responsesCreateOrConnectWithoutComplaintsInput
+    connect?: complaint_responsesWhereUniqueInput
   }
 
   export type complaintsUpdateimage_urlInput = {
@@ -6627,18 +8008,14 @@ export namespace Prisma {
     push?: string | string[]
   }
 
-  export type complaint_responsesUpdateManyWithoutComplaintsNestedInput = {
-    create?: XOR<complaint_responsesCreateWithoutComplaintsInput, complaint_responsesUncheckedCreateWithoutComplaintsInput> | complaint_responsesCreateWithoutComplaintsInput[] | complaint_responsesUncheckedCreateWithoutComplaintsInput[]
-    connectOrCreate?: complaint_responsesCreateOrConnectWithoutComplaintsInput | complaint_responsesCreateOrConnectWithoutComplaintsInput[]
-    upsert?: complaint_responsesUpsertWithWhereUniqueWithoutComplaintsInput | complaint_responsesUpsertWithWhereUniqueWithoutComplaintsInput[]
-    createMany?: complaint_responsesCreateManyComplaintsInputEnvelope
-    set?: complaint_responsesWhereUniqueInput | complaint_responsesWhereUniqueInput[]
-    disconnect?: complaint_responsesWhereUniqueInput | complaint_responsesWhereUniqueInput[]
-    delete?: complaint_responsesWhereUniqueInput | complaint_responsesWhereUniqueInput[]
-    connect?: complaint_responsesWhereUniqueInput | complaint_responsesWhereUniqueInput[]
-    update?: complaint_responsesUpdateWithWhereUniqueWithoutComplaintsInput | complaint_responsesUpdateWithWhereUniqueWithoutComplaintsInput[]
-    updateMany?: complaint_responsesUpdateManyWithWhereWithoutComplaintsInput | complaint_responsesUpdateManyWithWhereWithoutComplaintsInput[]
-    deleteMany?: complaint_responsesScalarWhereInput | complaint_responsesScalarWhereInput[]
+  export type complaint_responsesUpdateOneWithoutComplaintsNestedInput = {
+    create?: XOR<complaint_responsesCreateWithoutComplaintsInput, complaint_responsesUncheckedCreateWithoutComplaintsInput>
+    connectOrCreate?: complaint_responsesCreateOrConnectWithoutComplaintsInput
+    upsert?: complaint_responsesUpsertWithoutComplaintsInput
+    disconnect?: complaint_responsesWhereInput | boolean
+    delete?: complaint_responsesWhereInput | boolean
+    connect?: complaint_responsesWhereUniqueInput
+    update?: XOR<XOR<complaint_responsesUpdateToOneWithWhereWithoutComplaintsInput, complaint_responsesUpdateWithoutComplaintsInput>, complaint_responsesUncheckedUpdateWithoutComplaintsInput>
   }
 
   export type usersUpdateOneWithoutComplaintsNestedInput = {
@@ -6651,18 +8028,14 @@ export namespace Prisma {
     update?: XOR<XOR<usersUpdateToOneWithWhereWithoutComplaintsInput, usersUpdateWithoutComplaintsInput>, usersUncheckedUpdateWithoutComplaintsInput>
   }
 
-  export type complaint_responsesUncheckedUpdateManyWithoutComplaintsNestedInput = {
-    create?: XOR<complaint_responsesCreateWithoutComplaintsInput, complaint_responsesUncheckedCreateWithoutComplaintsInput> | complaint_responsesCreateWithoutComplaintsInput[] | complaint_responsesUncheckedCreateWithoutComplaintsInput[]
-    connectOrCreate?: complaint_responsesCreateOrConnectWithoutComplaintsInput | complaint_responsesCreateOrConnectWithoutComplaintsInput[]
-    upsert?: complaint_responsesUpsertWithWhereUniqueWithoutComplaintsInput | complaint_responsesUpsertWithWhereUniqueWithoutComplaintsInput[]
-    createMany?: complaint_responsesCreateManyComplaintsInputEnvelope
-    set?: complaint_responsesWhereUniqueInput | complaint_responsesWhereUniqueInput[]
-    disconnect?: complaint_responsesWhereUniqueInput | complaint_responsesWhereUniqueInput[]
-    delete?: complaint_responsesWhereUniqueInput | complaint_responsesWhereUniqueInput[]
-    connect?: complaint_responsesWhereUniqueInput | complaint_responsesWhereUniqueInput[]
-    update?: complaint_responsesUpdateWithWhereUniqueWithoutComplaintsInput | complaint_responsesUpdateWithWhereUniqueWithoutComplaintsInput[]
-    updateMany?: complaint_responsesUpdateManyWithWhereWithoutComplaintsInput | complaint_responsesUpdateManyWithWhereWithoutComplaintsInput[]
-    deleteMany?: complaint_responsesScalarWhereInput | complaint_responsesScalarWhereInput[]
+  export type complaint_responsesUncheckedUpdateOneWithoutComplaintsNestedInput = {
+    create?: XOR<complaint_responsesCreateWithoutComplaintsInput, complaint_responsesUncheckedCreateWithoutComplaintsInput>
+    connectOrCreate?: complaint_responsesCreateOrConnectWithoutComplaintsInput
+    upsert?: complaint_responsesUpsertWithoutComplaintsInput
+    disconnect?: complaint_responsesWhereInput | boolean
+    delete?: complaint_responsesWhereInput | boolean
+    connect?: complaint_responsesWhereUniqueInput
+    update?: XOR<XOR<complaint_responsesUpdateToOneWithWhereWithoutComplaintsInput, complaint_responsesUpdateWithoutComplaintsInput>, complaint_responsesUncheckedUpdateWithoutComplaintsInput>
   }
 
   export type complaintsCreateNestedManyWithoutUsersInput = {
@@ -6718,31 +8091,6 @@ export namespace Prisma {
     not?: NestedUuidFilter<$PrismaModel> | string
   }
 
-  export type NestedDateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type NestedStringFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringFilter<$PrismaModel> | string
-  }
-
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -6755,11 +8103,6 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedUuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -6785,6 +8128,64 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type NestedStringFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -6818,34 +8219,6 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
@@ -6877,6 +8250,110 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type adminCreateWithoutAccess_levelsInput = {
+    id?: string
+    created_at?: Date | string
+    name: string
+    ph_number: string
+    email: string
+    password?: string | null
+    token?: string | null
+    is_admin?: boolean
+  }
+
+  export type adminUncheckedCreateWithoutAccess_levelsInput = {
+    id?: string
+    created_at?: Date | string
+    name: string
+    ph_number: string
+    email: string
+    password?: string | null
+    token?: string | null
+    is_admin?: boolean
+  }
+
+  export type adminCreateOrConnectWithoutAccess_levelsInput = {
+    where: adminWhereUniqueInput
+    create: XOR<adminCreateWithoutAccess_levelsInput, adminUncheckedCreateWithoutAccess_levelsInput>
+  }
+
+  export type adminUpsertWithoutAccess_levelsInput = {
+    update: XOR<adminUpdateWithoutAccess_levelsInput, adminUncheckedUpdateWithoutAccess_levelsInput>
+    create: XOR<adminCreateWithoutAccess_levelsInput, adminUncheckedCreateWithoutAccess_levelsInput>
+    where?: adminWhereInput
+  }
+
+  export type adminUpdateToOneWithWhereWithoutAccess_levelsInput = {
+    where?: adminWhereInput
+    data: XOR<adminUpdateWithoutAccess_levelsInput, adminUncheckedUpdateWithoutAccess_levelsInput>
+  }
+
+  export type adminUpdateWithoutAccess_levelsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    ph_number?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    token?: NullableStringFieldUpdateOperationsInput | string | null
+    is_admin?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type adminUncheckedUpdateWithoutAccess_levelsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    ph_number?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    token?: NullableStringFieldUpdateOperationsInput | string | null
+    is_admin?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type access_levelsCreateWithoutAdminInput = {
+    accommodation?: string | null
+    payments?: string | null
+    events?: string | null
+    others?: string | null
+  }
+
+  export type access_levelsUncheckedCreateWithoutAdminInput = {
+    accommodation?: string | null
+    payments?: string | null
+    events?: string | null
+    others?: string | null
+  }
+
+  export type access_levelsCreateOrConnectWithoutAdminInput = {
+    where: access_levelsWhereUniqueInput
+    create: XOR<access_levelsCreateWithoutAdminInput, access_levelsUncheckedCreateWithoutAdminInput>
+  }
+
+  export type access_levelsUpsertWithoutAdminInput = {
+    update: XOR<access_levelsUpdateWithoutAdminInput, access_levelsUncheckedUpdateWithoutAdminInput>
+    create: XOR<access_levelsCreateWithoutAdminInput, access_levelsUncheckedCreateWithoutAdminInput>
+    where?: access_levelsWhereInput
+  }
+
+  export type access_levelsUpdateToOneWithWhereWithoutAdminInput = {
+    where?: access_levelsWhereInput
+    data: XOR<access_levelsUpdateWithoutAdminInput, access_levelsUncheckedUpdateWithoutAdminInput>
+  }
+
+  export type access_levelsUpdateWithoutAdminInput = {
+    accommodation?: NullableStringFieldUpdateOperationsInput | string | null
+    payments?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: NullableStringFieldUpdateOperationsInput | string | null
+    others?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type access_levelsUncheckedUpdateWithoutAdminInput = {
+    accommodation?: NullableStringFieldUpdateOperationsInput | string | null
+    payments?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: NullableStringFieldUpdateOperationsInput | string | null
+    others?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type complaintsCreateWithoutComplaint_responsesInput = {
@@ -6956,11 +8433,6 @@ export namespace Prisma {
     create: XOR<complaint_responsesCreateWithoutComplaintsInput, complaint_responsesUncheckedCreateWithoutComplaintsInput>
   }
 
-  export type complaint_responsesCreateManyComplaintsInputEnvelope = {
-    data: complaint_responsesCreateManyComplaintsInput | complaint_responsesCreateManyComplaintsInput[]
-    skipDuplicates?: boolean
-  }
-
   export type usersCreateWithoutComplaintsInput = {
     id?: string
     created_at?: Date | string
@@ -6986,30 +8458,27 @@ export namespace Prisma {
     create: XOR<usersCreateWithoutComplaintsInput, usersUncheckedCreateWithoutComplaintsInput>
   }
 
-  export type complaint_responsesUpsertWithWhereUniqueWithoutComplaintsInput = {
-    where: complaint_responsesWhereUniqueInput
+  export type complaint_responsesUpsertWithoutComplaintsInput = {
     update: XOR<complaint_responsesUpdateWithoutComplaintsInput, complaint_responsesUncheckedUpdateWithoutComplaintsInput>
     create: XOR<complaint_responsesCreateWithoutComplaintsInput, complaint_responsesUncheckedCreateWithoutComplaintsInput>
+    where?: complaint_responsesWhereInput
   }
 
-  export type complaint_responsesUpdateWithWhereUniqueWithoutComplaintsInput = {
-    where: complaint_responsesWhereUniqueInput
+  export type complaint_responsesUpdateToOneWithWhereWithoutComplaintsInput = {
+    where?: complaint_responsesWhereInput
     data: XOR<complaint_responsesUpdateWithoutComplaintsInput, complaint_responsesUncheckedUpdateWithoutComplaintsInput>
   }
 
-  export type complaint_responsesUpdateManyWithWhereWithoutComplaintsInput = {
-    where: complaint_responsesScalarWhereInput
-    data: XOR<complaint_responsesUpdateManyMutationInput, complaint_responsesUncheckedUpdateManyWithoutComplaintsInput>
+  export type complaint_responsesUpdateWithoutComplaintsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    responses?: complaint_responsesUpdateresponsesInput | InputJsonValue[]
   }
 
-  export type complaint_responsesScalarWhereInput = {
-    AND?: complaint_responsesScalarWhereInput | complaint_responsesScalarWhereInput[]
-    OR?: complaint_responsesScalarWhereInput[]
-    NOT?: complaint_responsesScalarWhereInput | complaint_responsesScalarWhereInput[]
-    id?: UuidFilter<"complaint_responses"> | string
-    created_at?: DateTimeFilter<"complaint_responses"> | Date | string
-    complaint_id?: UuidNullableFilter<"complaint_responses"> | string | null
-    responses?: JsonNullableListFilter<"complaint_responses">
+  export type complaint_responsesUncheckedUpdateWithoutComplaintsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    responses?: complaint_responsesUpdateresponsesInput | InputJsonValue[]
   }
 
   export type usersUpsertWithoutComplaintsInput = {
@@ -7051,7 +8520,7 @@ export namespace Prisma {
     image_url?: complaintsCreateimage_urlInput | string[]
     category: string
     status: string
-    complaint_responses?: complaint_responsesCreateNestedManyWithoutComplaintsInput
+    complaint_responses?: complaint_responsesCreateNestedOneWithoutComplaintsInput
   }
 
   export type complaintsUncheckedCreateWithoutUsersInput = {
@@ -7062,7 +8531,7 @@ export namespace Prisma {
     image_url?: complaintsCreateimage_urlInput | string[]
     category: string
     status: string
-    complaint_responses?: complaint_responsesUncheckedCreateNestedManyWithoutComplaintsInput
+    complaint_responses?: complaint_responsesUncheckedCreateNestedOneWithoutComplaintsInput
   }
 
   export type complaintsCreateOrConnectWithoutUsersInput = {
@@ -7105,30 +8574,6 @@ export namespace Prisma {
     user_id?: UuidNullableFilter<"complaints"> | string | null
   }
 
-  export type complaint_responsesCreateManyComplaintsInput = {
-    id?: string
-    created_at?: Date | string
-    responses?: complaint_responsesCreateresponsesInput | InputJsonValue[]
-  }
-
-  export type complaint_responsesUpdateWithoutComplaintsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    responses?: complaint_responsesUpdateresponsesInput | InputJsonValue[]
-  }
-
-  export type complaint_responsesUncheckedUpdateWithoutComplaintsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    responses?: complaint_responsesUpdateresponsesInput | InputJsonValue[]
-  }
-
-  export type complaint_responsesUncheckedUpdateManyWithoutComplaintsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    responses?: complaint_responsesUpdateresponsesInput | InputJsonValue[]
-  }
-
   export type complaintsCreateManyUsersInput = {
     id?: string
     created_at?: Date | string
@@ -7147,7 +8592,7 @@ export namespace Prisma {
     image_url?: complaintsUpdateimage_urlInput | string[]
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    complaint_responses?: complaint_responsesUpdateManyWithoutComplaintsNestedInput
+    complaint_responses?: complaint_responsesUpdateOneWithoutComplaintsNestedInput
   }
 
   export type complaintsUncheckedUpdateWithoutUsersInput = {
@@ -7158,7 +8603,7 @@ export namespace Prisma {
     image_url?: complaintsUpdateimage_urlInput | string[]
     category?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    complaint_responses?: complaint_responsesUncheckedUpdateManyWithoutComplaintsNestedInput
+    complaint_responses?: complaint_responsesUncheckedUpdateOneWithoutComplaintsNestedInput
   }
 
   export type complaintsUncheckedUpdateManyWithoutUsersInput = {

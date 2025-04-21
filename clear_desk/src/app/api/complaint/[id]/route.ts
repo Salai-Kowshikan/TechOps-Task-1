@@ -1,10 +1,11 @@
 // app/api/complaint/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma-client'
+import { sendEmail } from '@/lib/email'
 
 // GET request to fetch complaint details
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params 
 
   try {
     const complaint = await prisma.complaints.findUnique({
@@ -26,16 +27,16 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // POST request to respond to a complaint
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params
-  const { message, sentBy } = await req.json()
+export async function POST(req: NextRequest) {
+  const { id, message, sentBy } = await req.json()
+  console.log('Received data:', { id, message, sentBy })
 
-  if (!message || !sentBy) {
-    return NextResponse.json({ message: 'Message and sender are required' }, { status: 400 })
+  if (!id || !message || !sentBy) {
+    return NextResponse.json({ message: 'id, message, and sentBy are required' }, { status: 400 })
   }
 
   try {
-    // Find the complaint to ensure it exists
+    // Validate complaint exists
     const complaint = await prisma.complaints.findUnique({
       where: { id },
     })
@@ -44,41 +45,58 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       return NextResponse.json({ message: 'Complaint not found' }, { status: 404 })
     }
 
-    // Create a new response object
+    // Construct the new response
     const newResponse = {
       message,
-      sent_by: sentBy, // 'admin' or 'user'
+      sent_by: sentBy,
       created_at: new Date(),
     }
 
-    // If responses already exist, append the new response to the array
     let updatedResponse
-    const existingResponse = await prisma.complaint_responses.findUnique({
+    const existingResponse = await prisma.complaint_responses.findFirst({
       where: { complaint_id: id },
     })
-
+    
     if (existingResponse) {
+      const updatedResponses = [...existingResponse.responses, newResponse]
+    
       updatedResponse = await prisma.complaint_responses.update({
-        where: { complaint_id: id },
+        where: { id: existingResponse.id }, // Use actual ID here
         data: {
-          responses: {
-            push: newResponse, // Add the new response to the existing responses array
-          },
+          responses: updatedResponses,
         },
       })
     } else {
-      // If no responses exist, create a new entry with the response
       updatedResponse = await prisma.complaint_responses.create({
         data: {
           complaint_id: id,
-          responses: [newResponse], // Start the responses array with the new response
+          responses: [newResponse],
         },
       })
+    }
+    
+
+    // Send email if response is from admin
+    if (sentBy === 'admin' && complaint.user_id) {
+      const user = await prisma.users.findUnique({
+        where: { id: complaint.user_id },
+      })
+
+      if (user?.email) {
+        const subject = `You've received a reply to your complaint "${complaint.title}"`
+        const body = `Hello,\n\nYou have received a response from the admin:\n\n"${message}"\n\nRegards,\nSupport Team`
+
+        try {
+          await sendEmail(user.email, subject, body)
+        } catch (emailError) {
+          console.error('Error sending email:', emailError)
+        }
+      }
     }
 
     return NextResponse.json(updatedResponse)
   } catch (error) {
     console.error('Error responding to complaint:', error)
-    return NextResponse.json({ message: 'Error responding to complaint' }, { status: 500 })
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }

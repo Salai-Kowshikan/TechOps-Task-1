@@ -54,6 +54,7 @@ export default function ComplaintDetailPage() {
     queryKey: ['complaint', id],
     queryFn: async () => {
       const res = await axios.get(`/api/complaint/${id}`)
+      console.log('Complaint data:', res.data) // Log the complaint data
       return res.data
     },
     staleTime: 0,
@@ -78,6 +79,7 @@ export default function ComplaintDetailPage() {
   const sendResponseMutation = useMutation({
     mutationFn: async () => {
       await axios.post(`/api/complaint/${id}`, {
+        id,
         message: responseText,
         sentBy: 'admin',
       })
@@ -91,7 +93,7 @@ export default function ComplaintDetailPage() {
   const updateStatus = async (newStatus: Complaint['status']) => {
     try {
       setStatusUpdating(true)
-      await axios.put(`/api/complaint/${id}/status`, { status: newStatus })
+      await axios.put(`/api/complaint/${id}/status`, { id, status: newStatus })
       queryClient.invalidateQueries({ queryKey: ['complaint', id] })
     } finally {
       setStatusUpdating(false)
@@ -102,7 +104,11 @@ export default function ComplaintDetailPage() {
     return <p className="text-center mt-10">Loading...</p>
 
   const imageUrls = complaint.image_url || []
-  const responses = complaint.complaint_responses?.responses || []
+  const responses = Array.isArray(complaint.complaint_responses) && complaint.complaint_responses.length > 0
+  ? complaint.complaint_responses[0].responses
+  : []
+
+
 
   const getNextStatus = (status: Complaint['status']) => {
     if (status === 'pending') return 'in progress'
@@ -144,15 +150,15 @@ export default function ComplaintDetailPage() {
             Status:{' '}
             <span className="font-semibold capitalize">{complaint.status}</span>
             {nextStatus && canRespond && (
-            <Button
-            className="ml-3 text-xs bg-amber-500 hover:bg-amber-600 text-white"
-            size="sm"
-            onClick={() => updateStatus(nextStatus)}
-            disabled={statusUpdating}
-          >
-            Mark as {nextStatus}
-            <ArrowRight className="ml-1 h-3 w-3" />
-          </Button>
+              <Button
+                className="ml-3 text-xs bg-amber-500 hover:bg-amber-600 text-white"
+                size="sm"
+                onClick={() => updateStatus(nextStatus)}
+                disabled={statusUpdating}
+              >
+                Mark as {nextStatus}
+                <ArrowRight className="ml-1 h-3 w-3" />
+              </Button>
             )}
           </p>
 
@@ -183,14 +189,14 @@ export default function ComplaintDetailPage() {
                     className={clsx(
                       'p-3 rounded max-w-md',
                       res.sent_by === 'admin'
-                        ? 'bg-blue-100 text-right ml-auto'
-                        : 'bg-gray-100 text-left'
+                        ? 'bg-blue-100 dark:bg-blue-900 text-right ml-auto'
+                        : 'bg-gray-100 dark:bg-gray-800 text-left'
                     )}
                   >
-                    <p className="text-xs font-semibold text-gray-600 mb-1">
+                    <p className="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
                       {res.sent_by === 'admin' ? 'Admin' : 'User'}
                     </p>
-                    <p className="text-sm">{res.message}</p>
+                    <p className="text-sm text-gray-800 dark:text-gray-100">{res.message}</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {new Date(res.created_at).toLocaleTimeString([], {
                         hour: '2-digit',
@@ -202,6 +208,7 @@ export default function ComplaintDetailPage() {
               </ul>
             )}
           </div>
+
 
           {canRespond ? (
             <div>

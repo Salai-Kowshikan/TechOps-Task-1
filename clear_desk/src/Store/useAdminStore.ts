@@ -1,4 +1,4 @@
-// lib/zustand/useAdminStore.ts
+// Store/useAdminStore.ts
 import { create } from 'zustand'
 
 type AccessLevel = 'read' | 'read/write'

@@ -8,7 +8,7 @@ import { useAdminStore } from '@/Store/useAdminStore'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-
+import { useEffect } from 'react'
 // Complaint type
 type Complaint = {
   id: string
@@ -25,8 +25,19 @@ const categoryOptions = ['all', 'accommodation', 'events', 'payments', 'others']
 export default function AdminDashboard() {
   const isSuperAdmin = useAdminStore((state) => state.isSuperAdmin)
   const moderatorCategoryAccess = useAdminStore((state) => state.moderatorCategoryAccess)
+  const setIsSuperAdmin = useAdminStore(state => state.setIsSuperAdmin)
+  const setModeratorCategoryAccess = useAdminStore(state => state.setModeratorCategoryAccess)
   const [status, setStatus] = useState('all')
   const [category, setCategory] = useState('all')
+
+  // useEffect(() => {
+  //   // To Simulate mod1 access
+  //   setIsSuperAdmin(false)
+  //   setModeratorCategoryAccess([
+  //     { category: 'events', access: 'read' },
+  //     { category: 'others', access: 'read/write' }
+  //   ])
+  // }, [])
 
   const { data: complaints = [], isLoading } = useQuery<Complaint[]>({
     queryKey: ['complaints'],
@@ -133,7 +144,7 @@ export default function AdminDashboard() {
                       <p className="text-sm text-muted-foreground mb-1">Category: {c.category}</p>
                       <p className="text-sm text-muted-foreground mb-3">Status: {c.status}</p>
                       <Link href={`/admin/complaints/${c.id}`}>
-                        <Button variant={canRespond ? 'default' : 'secondary'} disabled={!canRespond}>
+                        <Button variant={canRespond ? 'default' : 'default'} disabled={!canRespond}>
                           {canRespond ? 'View & Respond' : 'View'}
                         </Button>
                       </Link>
