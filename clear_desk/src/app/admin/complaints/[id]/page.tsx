@@ -8,6 +8,12 @@ import { useAdminStore } from '@/Store/useAdminStore'
 import Link from 'next/link'
 import { ArrowLeft, Home } from 'lucide-react'
 import clsx from 'clsx'
+import { ArrowRight } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
 
 type ResponseItem = {
   message: string
@@ -65,9 +71,9 @@ export default function ComplaintDetailPage() {
     enabled: !!complaint?.user_id,
   })
 
-  const canRespond = isSuperAdmin ||!!moderatorCategoryAccess.find(a => a.category === complaint?.category && a.access === 'read/write')
-  console.log(canRespond)
-
+  const canRespond =
+    isSuperAdmin ||
+    !!moderatorCategoryAccess.find((a) => a.category === complaint?.category && a.access === 'read/write')
 
   const sendResponseMutation = useMutation({
     mutationFn: async () => {
@@ -92,7 +98,8 @@ export default function ComplaintDetailPage() {
     }
   }
 
-  if (complaintLoading || userLoading || !complaint) return <p className="text-center mt-10">Loading...</p>
+  if (complaintLoading || userLoading || !complaint)
+    return <p className="text-center mt-10">Loading...</p>
 
   const imageUrls = complaint.image_url || []
   const responses = complaint.complaint_responses?.responses || []
@@ -106,98 +113,119 @@ export default function ComplaintDetailPage() {
   const nextStatus = getNextStatus(complaint.status)
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4 py-6">
-      <div className="max-w-3xl mx-auto bg-white rounded shadow p-6">
-        {/* Back Navigation */}
-        <div className="flex justify-between items-center mb-4">
-          <button onClick={() => router.back()} className="flex items-center text-blue-600 hover:underline">
+    <div className="min-h-screen bg-background px-4 py-6">
+      <Card className="max-w-3xl mx-auto">
+        <CardHeader className="flex justify-between items-center mb-2 px-0">
+          <Button
+            variant="link"
+            onClick={() => router.back()}
+            className="text-blue-600 hover:underline px-0"
+          >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Back to Complaints
-          </button>
-          <Link href="/admin/dashboard" className="flex items-center text-blue-600 hover:underline">
-            <Home className="w-4 h-4 mr-1" />
-            Dashboard
-          </Link>
-        </div>
+          </Button>
+          <Button asChild variant="link" className="text-blue-600 hover:underline px-0">
+            <Link href="/admin/dashboard">
+              <Home className="w-4 h-4 mr-1" />
+              Dashboard
+            </Link>
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <CardTitle className="text-2xl font-bold mb-2">{complaint.title}</CardTitle>
+          <p className="text-sm text-muted-foreground mb-1">
+            {new Date(complaint.created_at).toLocaleDateString()}
+          </p>
+          <p className="text-sm text-muted-foreground mb-1">By: {user?.name || 'Unknown User'}</p>
+          <p className="text-muted-foreground mb-3">{complaint.description}</p>
+          <Separator className="my-3" />
+          <p className="text-sm mb-1">Category: {complaint.category}</p>
+          <p className="text-sm mb-3">
+            Status:{' '}
+            <span className="font-semibold capitalize">{complaint.status}</span>
+            {nextStatus && canRespond && (
+            <Button
+            className="ml-3 text-xs bg-amber-500 hover:bg-amber-600 text-white"
+            size="sm"
+            onClick={() => updateStatus(nextStatus)}
+            disabled={statusUpdating}
+          >
+            Mark as {nextStatus}
+            <ArrowRight className="ml-1 h-3 w-3" />
+          </Button>
+            )}
+          </p>
 
-        {/* Complaint Details */}
-        <h2 className="text-2xl font-bold mb-2">{complaint.title}</h2>
-        <p className="text-sm text-gray-500 mb-1">{new Date(complaint.created_at).toLocaleDateString()}</p>
-        <p className="text-sm text-gray-500 mb-1">By: {user?.name || 'Unknown User'}</p>
-        <p className="text-gray-700 mb-3">{complaint.description}</p>
-        <p className="text-sm text-gray-600 mb-2">Category: {complaint.category}</p>
-        <p className="text-sm text-gray-600 mb-4">
-          Status: <span className="font-semibold capitalize">{complaint.status}</span>
-          {nextStatus && canRespond && (
-            <button
-              className="ml-3 px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs rounded"
-              onClick={() => updateStatus(nextStatus)}
-              disabled={statusUpdating}
-            >
-              Mark as {nextStatus}
-            </button>
+          {imageUrls.length > 0 && (
+            <ScrollArea className="flex gap-4 overflow-x-auto mb-6">
+              <div className="flex gap-4">
+                {imageUrls.map((url, i) => (
+                  <img
+                    key={i}
+                    src={url}
+                    alt="Complaint Image"
+                    className="w-32 h-32 object-cover rounded"
+                  />
+                ))}
+              </div>
+            </ScrollArea>
           )}
-        </p>
 
-        {/* Images */}
-        {imageUrls.length > 0 && (
-          <div className="flex gap-4 overflow-x-auto mb-6">
-            {imageUrls.map((url, i) => (
-              <img key={i} src={url} alt="Complaint Image" className="w-32 h-32 object-cover rounded" />
-            ))}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-2">Conversation</h3>
+            {responses.length === 0 ? (
+              <p className="text-muted-foreground">No messages yet.</p>
+            ) : (
+              <ul className="space-y-2">
+                {responses.map((res, idx) => (
+                  <li
+                    key={idx}
+                    className={clsx(
+                      'p-3 rounded max-w-md',
+                      res.sent_by === 'admin'
+                        ? 'bg-blue-100 text-right ml-auto'
+                        : 'bg-gray-100 text-left'
+                    )}
+                  >
+                    <p className="text-xs font-semibold text-gray-600 mb-1">
+                      {res.sent_by === 'admin' ? 'Admin' : 'User'}
+                    </p>
+                    <p className="text-sm">{res.message}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {new Date(res.created_at).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-        )}
 
-        {/* Conversation */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-2">Conversation</h3>
-          {responses.length === 0 ? (
-            <p className="text-gray-500">No messages yet.</p>
+          {canRespond ? (
+            <div>
+              <Textarea
+                value={responseText}
+                onChange={(e) => setResponseText(e.target.value)}
+                placeholder="Type your response..."
+                rows={3}
+                className="mb-2"
+              />
+              <Button
+                onClick={() => sendResponseMutation.mutate()}
+                disabled={sendResponseMutation.isPending || !responseText}
+              >
+                {sendResponseMutation.isPending ? 'Sending...' : 'Send Response'}
+              </Button>
+            </div>
           ) : (
-            <ul className="space-y-2">
-              {responses.map((res, idx) => (
-                <li
-                  key={idx}
-                  className={clsx(
-                    'p-3 rounded max-w-md',
-                    res.sent_by === 'admin' ? 'bg-blue-100 text-right ml-auto' : 'bg-gray-100 text-left'
-                  )}
-                >
-                  <p className="text-xs font-semibold text-gray-600 mb-1">
-                    {res.sent_by === 'admin' ? 'Admin' : 'User'}
-                  </p>
-                  <p className="text-sm">{res.message}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {new Date(res.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </li>
-              ))}
-            </ul>
+            <p className="text-sm text-muted-foreground italic">
+              You have read-only access to this complaint.
+            </p>
           )}
-        </div>
-
-        {/* Respond Box */}
-        {canRespond ? (
-          <div>
-            <textarea
-              value={responseText}
-              onChange={(e) => setResponseText(e.target.value)}
-              placeholder="Type your response..."
-              className="w-full border p-2 rounded mb-2"
-              rows={3}
-            />
-            <button
-              onClick={() => sendResponseMutation.mutate()}
-              disabled={sendResponseMutation.isPending || !responseText}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              {sendResponseMutation.isPending ? 'Sending...' : 'Send Response'}
-            </button>
-          </div>
-        ) : (
-          <p className="text-sm text-gray-500 italic">You have read-only access to this complaint.</p>
-        )}
-      </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
