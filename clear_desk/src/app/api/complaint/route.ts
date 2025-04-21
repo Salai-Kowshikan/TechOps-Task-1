@@ -2,7 +2,7 @@ import { NextResponse,NextRequest } from "next/server";
 import { uploadToSupabase } from "@/lib/file_upload";
 import { prisma } from "@/lib/prisma-client";
 
-export async function POST(request: Request) { //user - create complaint
+export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const complaintData: Record<string, any> = {};
@@ -47,7 +47,7 @@ export async function POST(request: Request) { //user - create complaint
   }
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get("user_id");
