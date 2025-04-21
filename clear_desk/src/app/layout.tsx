@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Clear Desk - complaint management system",
-  description: "A complaint management system for CEG Tech Forum",
+  title: "Clear Desk - Admin & User Dashboard",
+  description: "Complaint management system for admins and users at CEG Tech Forum",
 };
 
 export default function RootLayout({

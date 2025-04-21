@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse,NextRequest } from "next/server";
 import { uploadToSupabase } from "@/lib/file_upload";
 import { prisma } from "@/lib/prisma-client";
 
-export async function POST(request: Request) {
+export async function POST(request: Request) { //user - create complaint
   try {
     const formData = await request.formData();
     const complaintData: Record<string, any> = {};
