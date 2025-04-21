@@ -1,12 +1,11 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import Hero from "@/components/Landing/Hero";
+import Features from "@/components/Landing/Features";
 
 export default function Home() {
   return (
-    <div>
-      <Link href="/user/dashboard" passHref>
-        <Button>Go to User dashboard</Button>
-      </Link>
-    </div>
+    <main className="min-h-screen flex flex-col bg-background text-foreground">
+      <Hero />
+      <Features />
+    </main>
   );
 }
