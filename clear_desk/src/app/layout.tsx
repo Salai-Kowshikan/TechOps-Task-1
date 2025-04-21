@@ -35,7 +35,9 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <QueryProvider>
+            <Navbar />
             {children}
+            <Footer />
             <Toaster expand={true} position="bottom-left" richColors />
           </QueryProvider>
         </ThemeProvider>
