@@ -41,7 +41,6 @@ export default function RootLayout({
             <Toaster expand={true} position="bottom-left" richColors />
           </Providers>
         </ThemeProvider>
-
       </body>
     </html>
   );
