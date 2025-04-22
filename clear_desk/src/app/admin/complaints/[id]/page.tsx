@@ -1,122 +1,142 @@
-'use client'
+'use client';
 
-import { useParams, useRouter } from 'next/navigation'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
-import { useState } from 'react'
-import { useAdminStore } from '@/Store/useAdminStore'
-import Link from 'next/link'
-import { ArrowLeft, Home } from 'lucide-react'
-import clsx from 'clsx'
-import { ArrowRight } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
+import { useParams, useRouter } from 'next/navigation';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { useState } from 'react';
+import { useAdminStore } from '@/Store/useAdminStore';
+import Link from 'next/link';
+import { ArrowLeft, Home, ArrowRight } from 'lucide-react';
+import clsx from 'clsx';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 type ResponseItem = {
-  message: string
-  sent_by: string
-  created_at: string
-}
+  message: string;
+  sent_by: string;
+  created_at: string;
+};
 
 type Complaint = {
-  id: string
-  title: string
-  description: string
-  image_url: string[]
-  created_at: string
-  category: string
-  status: 'pending' | 'in progress' | 'resolved'
-  user_id: string
+  id: string;
+  title: string;
+  description: string[];
+  image_url: string[];
+  created_at: string;
+  category: string;
+  status: 'pending' | 'in progress' | 'resolved';
+  user_id: string;
   complaint_responses?: {
-    id: string
-    created_at: string
-    responses: ResponseItem[]
-  }
-}
+    id: string;
+    created_at: string;
+    responses: ResponseItem[];
+  };
+};
 
 type User = {
-  name: string
-}
+  name: string;
+};
 
 export default function ComplaintDetailPage() {
-  const { id } = useParams()
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const isSuperAdmin = useAdminStore((s) => s.isSuperAdmin)
-  const moderatorCategoryAccess = useAdminStore((s) => s.moderatorCategoryAccess)
-  const [responseText, setResponseText] = useState('')
-  const [statusUpdating, setStatusUpdating] = useState(false)
+  const { id } = useParams();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const isSuperAdmin = useAdminStore((s) => s.isSuperAdmin);
+  const moderatorCategoryAccess = useAdminStore((s) => s.moderatorCategoryAccess);
+  const [responseText, setResponseText] = useState('');
+  const [statusUpdating, setStatusUpdating] = useState(false);
 
   const { data: complaint, isLoading: complaintLoading } = useQuery<Complaint>({
     queryKey: ['complaint', id],
     queryFn: async () => {
-      const res = await axios.get(`/api/complaint/${id}`)
-      console.log('Complaint data:', res.data) // Log the complaint data
-      return res.data
+      const toastId = toast.loading('Fetching complaint details...');
+      try {
+        const res = await axios.get(`/api/complaint/${id}`);
+        toast.success('Complaint details fetched successfully', { id: toastId });
+        return res.data.data; // Extract the `data` field
+      } catch (error) {
+        toast.error('Failed to fetch complaint details', { id: toastId });
+        throw error;
+      }
     },
     staleTime: 0,
-  })
+  });
 
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: ['user', complaint?.user_id],
     queryFn: async () => {
       if (complaint?.user_id) {
-        const res = await axios.get(`/api/user/${complaint.user_id}`)
-        return res.data
+        const res = await axios.get(`/api/user/${complaint.user_id}`);
+        return res.data; // Use the user object directly
       }
-      return { name: 'Unknown' }
+      return { name: 'Unknown' };
     },
     enabled: !!complaint?.user_id,
-  })
+  });
 
   const canRespond =
     isSuperAdmin ||
-    !!moderatorCategoryAccess.find((a) => a.category === complaint?.category && a.access === 'read/write')
+    !!moderatorCategoryAccess.find((a) => a.category === complaint?.category && a.access === 'read/write');
 
-  const sendResponseMutation = useMutation({
-    mutationFn: async () => {
-      await axios.post(`/api/complaint/${id}`, {
-        id,
-        message: responseText,
-        sentBy: 'admin',
-      })
-    },
-    onSuccess: () => {
-      setResponseText('')
-      queryClient.invalidateQueries({ queryKey: ['complaint', id] })
-    },
-  })
+    const sendResponseMutation = useMutation({
+      mutationFn: async () => {
+        const toastId = toast.loading('Sending response...');
+        try {
+          const res = await axios.post(`/api/complaint/${id}`, {
+            id,
+            message: responseText,
+            sentBy: 'admin',
+          });
+          toast.success('Response sent successfully', { id: toastId });
+          return res.data.data; // Extract the `data` field
+        } catch (error) {
+          toast.error('Failed to send response', { id: toastId });
+          throw error;
+        }
+      },
+      onSuccess: () => {
+        setResponseText('');
+        queryClient.invalidateQueries({ queryKey: ['complaint', id] });
+      },
+    });
 
-  const updateStatus = async (newStatus: Complaint['status']) => {
-    try {
-      setStatusUpdating(true)
-      await axios.put(`/api/complaint/${id}/status`, { id, status: newStatus })
-      queryClient.invalidateQueries({ queryKey: ['complaint', id] })
-    } finally {
-      setStatusUpdating(false)
-    }
-  }
+    const updateStatus = async (newStatus: Complaint['status']) => {
+      const toastId = toast.loading('Updating complaint status...');
+      try {
+        setStatusUpdating(true);
+        const res = await axios.put(`/api/complaint/${id}/status`, { id, status: newStatus });
+        if (res.data.success) {
+          toast.success(res.data.message, { id: toastId }); // Use the `message` field
+        } else {
+          toast.error(res.data.message || 'Failed to update complaint status', { id: toastId });
+        }
+        queryClient.invalidateQueries({ queryKey: ['complaint', id] });
+      } catch (error) {
+        toast.error('Something went wrong while updating status', { id: toastId });
+        console.error(error);
+      } finally {
+        setStatusUpdating(false);
+      }
+    };
 
   if (complaintLoading || userLoading || !complaint)
-    return <p className="text-center mt-10">Loading...</p>
+    return <p className="text-center mt-10">Loading...</p>;
 
-  const imageUrls = complaint.image_url || []
-  const responses = Array.isArray(complaint.complaint_responses) && complaint.complaint_responses.length > 0
-  ? complaint.complaint_responses[0].responses
-  : []
-
-
+  const imageUrls = complaint.image_url || [];
+  const responses: ResponseItem[] =
+  complaint?.complaint_responses?.responses || [];
 
   const getNextStatus = (status: Complaint['status']) => {
-    if (status === 'pending') return 'in progress'
-    if (status === 'in progress') return 'resolved'
-    return null
-  }
-
-  const nextStatus = getNextStatus(complaint.status)
+    if (status === 'pending') return 'in progress';
+    if (status === 'in progress') return 'resolved';
+    return null;
+  };
+   console.log(user,complaint)
+  const nextStatus = getNextStatus(complaint.status);
 
   return (
     <div className="min-h-screen bg-background px-4 py-6">
@@ -209,7 +229,6 @@ export default function ComplaintDetailPage() {
             )}
           </div>
 
-
           {canRespond ? (
             <div>
               <Textarea
@@ -234,5 +253,5 @@ export default function ComplaintDetailPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

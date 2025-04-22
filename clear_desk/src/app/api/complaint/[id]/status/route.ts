@@ -1,14 +1,20 @@
 import { prisma } from "@/lib/prisma-client";
 import { NextResponse } from 'next/server';
-import { sendEmail } from '@/lib/email'; 
+import { sendEmail } from '@/lib/email';
 
 export async function PUT(req: Request) {
   try {
-    const { id, status } = await req.json(); 
+    const { id, status } = await req.json();
     console.log('Received data:', { id, status });
 
     if (!id || !status) {
-      return NextResponse.json({ message: 'id and status are required' }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Both complaint ID and status are required',
+        },
+        { status: 400 }
+      );
     }
 
     const complaint = await prisma.complaints.findUnique({
@@ -16,7 +22,13 @@ export async function PUT(req: Request) {
     });
 
     if (!complaint) {
-      return NextResponse.json({ message: 'Complaint not found' }, { status: 404 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Complaint not found',
+        },
+        { status: 404 }
+      );
     }
 
     const updatedComplaint = await prisma.complaints.update({
@@ -24,23 +36,41 @@ export async function PUT(req: Request) {
       data: { status },
     });
 
+    // Notify user via email if user exists
     if (updatedComplaint.user_id) {
       const user = await prisma.users.findUnique({
         where: { id: updatedComplaint.user_id },
       });
 
-      if (user) {
-        const userEmail = user.email;
-        const emailSubject = `Complaint status updated to: ${status}`;
-        const emailBody = `Your complaint titled "${updatedComplaint.title}" has been updated to "${status}".`;
+      if (user?.email) {
+        const subject = `Complaint status updated to: ${status}`;
+        const body = `Hello,\n\nYour complaint titled "${updatedComplaint.title}" has been updated to "${status}".\n\nRegards,\nSupport Team`;
 
-        await sendEmail(userEmail, emailSubject, emailBody);
+        try {
+          await sendEmail(user.email, subject, body);
+        } catch (emailError) {
+          console.error("Failed to send email notification:", emailError);
+        }
       }
     }
-    return NextResponse.json(updatedComplaint);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: `Complaint status updated to '${status}' successfully.`,
+        data: updatedComplaint,
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error('STATUS UPDATE ERROR', error);
-    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
+    console.error('STATUS UPDATE ERROR:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Failed to update complaint status',
+        error: (error as Error).message,
+      },
+      { status: 500 }
+    );
   }
 }
-
