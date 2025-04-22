@@ -5,54 +5,41 @@ import Link from 'next/link'
 import axios from 'axios'
 import { useAdminStore } from '@/Store/useAdminStore'
 import { useRouter } from 'next/navigation'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '@/components/ui/select'
 
 const categories = ['accommodation', 'payments', 'events', 'others']
 const accessOptions = ['no_access', 'read', 'read/write']
 
-// Define the Moderator type
 type Moderator = {
   id: string
   name: string
-  accessLevel: Record<string, string> // e.g., { accommodation: 'read', payments: 'no_access' }
+  accessLevel: Record<string, string>
 }
 
 export default function ManageModeratorsPage() {
   const isSuperAdmin = useAdminStore((state) => state.isSuperAdmin)
   const router = useRouter()
-
   const [moderators, setModerators] = useState<Moderator[]>([])
 
-  // const [moderators, setModerators] = useState<Moderator[]>([ //dummy data
-  //   {
-  //     id: '1',
-  //     name: 'John Doe',
-  //     accessLevel: {
-  //       accommodation: 'read',
-  //       payments: 'read/write',
-  //       events: 'no_access',
-  //       others: 'read',
-  //     },
-  //   },
-  //   {
-  //     id: '2',
-  //     name: 'Jane Smith',
-  //     accessLevel: {
-  //       accommodation: 'no_access',
-  //       payments: 'read',
-  //       events: 'read/write',
-  //       others: 'no_access',
-  //     },
-  //   },
-  // ])
-
-  // Redirect if the user is not a super admin
   useEffect(() => {
     if (!isSuperAdmin) {
-      router.push('/admin/dashboard') // Redirect to the dashboard if not authorized
+      router.push('/admin/dashboard')
     }
   }, [isSuperAdmin, router])
 
-  // Fetch moderators
   useEffect(() => {
     axios.get('/api/moderators').then((res) => setModerators(res.data))
   }, [])
@@ -61,11 +48,10 @@ export default function ManageModeratorsPage() {
     try {
       await axios.patch('/api/moderators', {
         moderatorId: modId,
-        category: category,
-        newLevel: newLevel,
+        category,
+        newLevel,
       })
 
-      // Update the UI state with the new access level for the specific category
       setModerators((prev) =>
         prev.map((mod) =>
           mod.id === modId
@@ -85,55 +71,66 @@ export default function ManageModeratorsPage() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Manage Moderators</h1>
+    <div className="min-h-screen p-8 bg-background text-foreground">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-foreground">Manage Moderators</h1>
         <div className="flex gap-4">
           <Link href="/admin/dashboard">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded">Return to Dashboard</button>
+            <Button variant="outline">Return to Dashboard</Button>
           </Link>
           <Link href="/admin/moderators/signup">
-            <button className="px-4 py-2 bg-green-600 text-white rounded">Moderator Signup</button>
+            <Button className="bg-green-600 hover:bg-green-700 text-white">
+              Moderator Signup
+            </Button>
           </Link>
         </div>
       </div>
 
-      <div className="overflow-auto bg-white p-4 rounded shadow">
-        <table className="table-auto w-full border">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="px-4 py-2 border">Name</th>
-              {categories.map((cat) => (
-                <th key={cat} className="px-4 py-2 border capitalize">
-                  {cat}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {moderators.map((mod) => (
-              <tr key={mod.id} className="text-center">
-                <td className="border px-4 py-2">{mod.name}</td>
+      <Card className="overflow-auto bg-background text-foreground border border-border rounded-xl shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-xl text-foreground">Moderator Access Table</CardTitle>
+        </CardHeader>
+        <CardContent className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="bg-muted text-muted-foreground">
+                <th className="border border-border px-4 py-2 text-left">Name</th>
                 {categories.map((cat) => (
-                  <td key={cat} className="border px-4 py-2">
-                    <select
-                      className="border rounded px-2 py-1"
-                      value={mod.accessLevel?.[cat] || 'no_access'}
-                      onChange={(e) => handleChange(mod.id, cat, e.target.value)}
-                    >
-                      {accessOptions.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
+                  <th key={cat} className="border border-border px-4 py-2 capitalize text-left">
+                    {cat}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {moderators.map((mod) => (
+                <tr key={mod.id} className="even:bg-muted/40">
+                  <td className="border border-border px-4 py-2 font-medium">{mod.name}</td>
+                  {categories.map((cat) => (
+                    <td key={cat} className="border border-border px-4 py-2">
+                      <Select
+                        value={mod.accessLevel?.[cat] || 'no_access'}
+                        onValueChange={(val) => handleChange(mod.id, cat, val)}
+                      >
+                        <SelectTrigger className="w-36">
+                          <SelectValue placeholder="Select Access" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {accessOptions.map((opt) => (
+                            <SelectItem key={opt} value={opt}>
+                              {opt}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardContent>
+      </Card>
     </div>
   )
 }

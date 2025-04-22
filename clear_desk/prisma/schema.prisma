@@ -17,10 +17,9 @@ model access_levels {
   payments      String? @default("no_access")
   events        String? @default("no_access")
   others        String? @default("no_access")
-  admin         admin   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  admin         admin   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction, name: "AdminAccessRelation")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model admin {
   id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at    DateTime       @default(now()) @db.Timestamptz(6)
@@ -30,8 +29,9 @@ model admin {
   password      String?
   token         String?
   is_admin      Boolean        @default(false)
-  access_levels access_levels?
+  access_levels access_levels? @relation(name: "AdminAccessRelation")
 }
+
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model complaint_responses {

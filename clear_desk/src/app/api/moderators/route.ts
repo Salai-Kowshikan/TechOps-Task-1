@@ -8,16 +8,27 @@ import { prisma } from '@/lib/prisma-client'
 export async function GET(req: NextRequest) {
   try {
     const moderators = await prisma.admin.findMany({
-      where: { is_admin: false },
-      include: { access_levels: true },
+      where: {
+        is_admin: false,  
+      },
+      include: {
+        access_levels: true, 
+      },
     });
 
-    return NextResponse.json(moderators, { status: 200 });
+    // Filter out any admins who don't have an access_levels entry
+    const moderatorsWithAccess = moderators.filter(moderator => moderator.access_levels !== null);
+
+    return NextResponse.json(moderatorsWithAccess, { status: 200 });
   } catch (error) {
     console.error("Error fetching moderators:", error);
-    return NextResponse.json({ error: "Failed to fetch moderators" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to fetch moderators" }, { status: 500 });
   }
 }
+
+
+
+
 
 /**
  * PATCH /api/moderators
