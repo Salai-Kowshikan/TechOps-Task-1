@@ -3,6 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import Providers from "./provider";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme/theme-provider"
+import Navbar from "@/components/Landing/Navbar"
+import Footer from "@/components/Landing/Footer";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,11 +30,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers>
-          {children}
-          <Toaster expand={true} position="bottom-left" richColors />
-        </Providers>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Providers>
+            <Navbar />
+            {children}
+            <Footer />
+            <Toaster expand={true} position="bottom-left" richColors />
+          </Providers>
+        </ThemeProvider>
+
       </body>
     </html>
   );
