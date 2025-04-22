@@ -9,7 +9,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -17,8 +16,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
 
 interface ComplaintCardProps {
+  complaint_id: string;
   title: string;
   description: string;
   images: string[];
@@ -27,12 +28,55 @@ interface ComplaintCardProps {
 }
 
 const ComplaintCard: React.FC<ComplaintCardProps> = ({
+  complaint_id,
   title,
   description,
   images,
   category,
   status,
 }) => {
+  const [messages, setMessages] = useState<any[]>([]); 
+  const [newMessage, setNewMessage] = useState("");
+
+  const fetchMessages = async () => {
+    try {
+      const response = await fetch(`/api/response?complaint_id=${complaint_id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch messages");
+      }
+      const data = await response.json();
+      setMessages(data.responses || []);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!newMessage.trim()) return;
+
+    try {
+      const response = await fetch("/api/response", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          complaint_id,
+          role: "user",
+          message: newMessage,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      const data = await response.json();
+      setMessages(data.updatedResponses);
+      setNewMessage(""); 
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -59,7 +103,7 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
       <CardFooter className="ml-auto">
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Open</Button>
+            <Button onClick={fetchMessages}>Open</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -73,12 +117,34 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
               }}
             >
               <div className="flex-1 overflow-y-auto">
-
+                {messages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 rounded-lg max-w-xs mb-2 ${
+                      msg.sent_by === "admin"
+                        ? "bg-blue-100 text-right ml-auto"
+                        : "bg-gray-100 text-left"
+                    }`}
+                  >
+                    <p className="text-sm font-semibold">
+                      {msg.sent_by === "admin" ? "Admin" : "User"}
+                    </p>
+                    <p className="text-sm">{msg.message}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {new Date(msg.created_at).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                ))}
               </div>
               <div style={{ display: "flex", gap: "8px" }}>
                 <Input
                   type="text"
                   placeholder="Type your message..."
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
                   style={{
                     flex: 1,
                     padding: "8px",
@@ -86,7 +152,7 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
                     borderRadius: "4px",
                   }}
                 />
-                <Button>Send</Button>
+                <Button onClick={sendMessage}>Send</Button>
               </div>
             </div>
           </DialogContent>

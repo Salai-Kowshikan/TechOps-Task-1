@@ -32,6 +32,7 @@ export default function UserDashboard() {
         {complaints?.data?.map((complaint: any) => (
           <ComplaintCard
             key={complaint.id}
+            complaint_id={complaint.id}
             title={complaint.title}
             description={complaint.description}
             images={complaint.image_url}
