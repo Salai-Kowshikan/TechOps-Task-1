@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import nodemailer from 'nodemailer'
-import crypto from 'crypto'
+import jwt from 'jsonwebtoken'
+import { prisma } from '@/lib/prisma-client'
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret'
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,15 +15,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
 
-    const userExists = true
+    const user = await prisma.users.findUnique({ where: { email } })
 
-    if (!userExists) {
+    if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    const token = crypto.randomBytes(32).toString('hex')
-    const resetLink = `${process.env.BASE_URL}/reset-password?token=${token}`
+    const signedToken = jwt.sign({ email }, JWT_SECRET, { expiresIn: '15m' })
 
+    await prisma.users.update({
+      where: { email },
+      data: { token: signedToken },
+    })
+
+    const resetLink = `${process.env.BASE_URL}/reset-password?token=${signedToken}`
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -29,6 +37,9 @@ export async function POST(req: NextRequest) {
         pass: process.env.EMAIL_PASS as string,
       },
     })
+    console.log(process.env.EMAIL_USER)
+    console.log(process.env.EMAIL_PASS)
+
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,

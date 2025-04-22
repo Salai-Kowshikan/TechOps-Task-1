@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import bcrypt from 'bcrypt';
-import { prisma } from '../../../../lib/prisma';
+import { prisma } from '@/lib/prisma-client';
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,6 +15,19 @@ export async function POST(req: NextRequest) {
     if (!name || !email || !password || !ph_number) {
       return NextResponse.json(
         { success: false, message: 'All fields are required' },
+        { status: 400 }
+      );
+    }
+
+    // Check if email already exists in users table
+    const existingUser = await prisma.users.findUnique({ where: { email } });
+
+    // Check if email exists in admin table
+    const existingAdmin = await prisma.admin.findUnique({ where: { email } });
+
+    if (existingUser || existingAdmin) {
+      return NextResponse.json(
+        { success: false, message: 'User already exists' },
         { status: 400 }
       );
     }

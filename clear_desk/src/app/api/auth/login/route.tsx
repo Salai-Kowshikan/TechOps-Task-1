@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
-import { prisma } from '../../../../lib/prisma' 
+import { prisma } from '@/lib/prisma-client'
 
 const SECRET = process.env.JWT_SECRET || 'your-secret-key'
 
@@ -10,8 +10,17 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password }: { email: string; password: string } = await req.json()
 
-    const user = await prisma.users.findUnique({ where: { email } })
+    // Try to find the user in the `users` table
+    let user = await prisma.users.findUnique({ where: { email } })
+    let userType = 'user'
 
+    // If not found in users, try to find in the `admin` table
+    if (!user) {
+      user = await prisma.admin.findUnique({ where: { email } })
+      userType = 'admin'
+    }
+
+    // If still not found
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
@@ -21,23 +30,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, SECRET, { expiresIn: '1h' })
+    const token = jwt.sign({ id: user.id, email: user.email, type: userType }, SECRET, { expiresIn: '1h' })
 
     const response = NextResponse.json({
       message: 'Login successful',
-      user: { email: user.email, name: user.name },
+      user: { email: user.email, name: user.name, type: userType },
     })
 
     response.cookies.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 60 * 60, 
+      maxAge: 60 * 60,
       path: '/',
     })
 
     response.cookies.set('userId', user.id.toString(), {
-      httpOnly: false, 
+      httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 60 * 60,
