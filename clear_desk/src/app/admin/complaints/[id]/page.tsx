@@ -72,21 +72,30 @@ export default function ComplaintDetailPage() {
     enabled: !!complaint?.user_id,
   })
 
+  const { data: responses, isLoading: responsesLoading } = useQuery<ResponseItem[]>({
+    queryKey: ['responses', id],
+    queryFn: async () => {
+      const res = await axios.get(`/api/response?complaint_id=${id}`)
+      return res.data.responses
+    },
+    enabled: !!id,
+  })
+
   const canRespond =
     isSuperAdmin ||
     !!moderatorCategoryAccess.find((a) => a.category === complaint?.category && a.access === 'read/write')
 
   const sendResponseMutation = useMutation({
     mutationFn: async () => {
-      await axios.post(`/api/complaint/${id}`, {
-        id,
+      await axios.post(`/api/response`, {
+        complaint_id: id,
+        role: 'admin',
         message: responseText,
-        sentBy: 'admin',
       })
     },
     onSuccess: () => {
       setResponseText('')
-      queryClient.invalidateQueries({ queryKey: ['complaint', id] })
+      queryClient.invalidateQueries({ queryKey: ['responses', id] })
     },
   })
 
@@ -100,15 +109,10 @@ export default function ComplaintDetailPage() {
     }
   }
 
-  if (complaintLoading || userLoading || !complaint)
+  if (complaintLoading || userLoading || responsesLoading || !complaint)
     return <p className="text-center mt-10">Loading...</p>
 
   const imageUrls = complaint.image_url || []
-  const responses = Array.isArray(complaint.complaint_responses) && complaint.complaint_responses.length > 0
-  ? complaint.complaint_responses[0].responses
-  : []
-
-
 
   const getNextStatus = (status: Complaint['status']) => {
     if (status === 'pending') return 'in progress'
@@ -179,11 +183,11 @@ export default function ComplaintDetailPage() {
 
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">Conversation</h3>
-            {responses.length === 0 ? (
+            {responses?.length === 0 ? (
               <p className="text-muted-foreground">No messages yet.</p>
             ) : (
               <ul className="space-y-2">
-                {responses.map((res, idx) => (
+                {(responses ?? []).map((res, idx) => (
                   <li
                     key={idx}
                     className={clsx(
@@ -208,7 +212,6 @@ export default function ComplaintDetailPage() {
               </ul>
             )}
           </div>
-
 
           {canRespond ? (
             <div>
