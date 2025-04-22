@@ -199,11 +199,11 @@ export default function ComplaintDetailPage() {
 
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">Conversation</h3>
-            {responses.length === 0 ? (
+            {responses?.length === 0 ? (
               <p className="text-muted-foreground">No messages yet.</p>
             ) : (
               <ul className="space-y-2">
-                {responses.map((res, idx) => (
+                {(responses ?? []).map((res, idx) => (
                   <li
                     key={idx}
                     className={clsx(
