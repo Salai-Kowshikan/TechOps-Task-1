@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import Link from 'next/link'
@@ -8,7 +8,9 @@ import { useAdminStore } from '@/Store/useAdminStore'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { useEffect } from 'react'
+import { toast } from 'sonner'
+
+
 // Complaint type
 type Complaint = {
   id: string
@@ -25,29 +27,35 @@ const categoryOptions = ['all', 'accommodation', 'events', 'payments', 'others']
 export default function AdminDashboard() {
   const isSuperAdmin = useAdminStore((state) => state.isSuperAdmin)
   const moderatorCategoryAccess = useAdminStore((state) => state.moderatorCategoryAccess)
-  const setIsSuperAdmin = useAdminStore(state => state.setIsSuperAdmin)
-  const setModeratorCategoryAccess = useAdminStore(state => state.setModeratorCategoryAccess)
+
   const [status, setStatus] = useState('all')
   const [category, setCategory] = useState('all')
 
-  // useEffect(() => {
-  //   // To Simulate mod1 access
-  //   setIsSuperAdmin(false)
-  //   setModeratorCategoryAccess([
-  //     { category: 'events', access: 'read' },
-  //     { category: 'others', access: 'read/write' }
-  //   ])
-  // }, [])
-
-  const { data: complaints = [], isLoading } = useQuery<Complaint[]>({
+  const { data: complaints = [], isLoading, isError } = useQuery<Complaint[]>({
     queryKey: ['complaints'],
     queryFn: async () => {
-      const res = await axios.get(`/api/complaint/admin`)
-      return res.data
+      toast.loading('Fetching complaints...')
+      try {
+        const res = await axios.get(`/api/complaint/admin`)
+        toast.success('Complaints fetched successfully')
+        return res.data.data
+      } catch (err) {
+        toast.error('Failed to fetch complaints')
+        throw err
+      } finally {
+        toast.dismiss()
+      }
     }
   })
 
+  useEffect(() => {
+    if (isError) {
+      toast.error('Something went wrong while loading complaints.')
+    }
+  }, [isError])
+
   const filteredComplaints = useMemo(() => {
+    if (!Array.isArray(complaints)) return []  
     let result = complaints
 
     if (!isSuperAdmin) {
@@ -112,7 +120,6 @@ export default function AdminDashboard() {
                     {c.charAt(0).toUpperCase() + c.slice(1)}
                   </Button>
                 ))}
-
               </div>
             </div>
           </div>

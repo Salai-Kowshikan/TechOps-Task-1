@@ -38,7 +38,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <Footer />
-            <Toaster expand={true} position="bottom-left" richColors />
+            <Toaster expand={true} position="top-right" richColors />
           </QueryProvider>
         </ThemeProvider>
 
