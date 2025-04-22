@@ -18,11 +18,11 @@ exports.$Enums = {}
 
 /**
  * Prisma Client JS version: 6.6.0
- * Query Engine version: acc0b9dd43eb689cbd20c9470515d719db10d0b0
+ * Query Engine version: f676762280b54cd07c770017ed3711ddde35f37a
  */
 Prisma.prismaVersion = {
   client: "6.6.0",
-  engine: "acc0b9dd43eb689cbd20c9470515d719db10d0b0"
+  engine: "f676762280b54cd07c770017ed3711ddde35f37a"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -117,6 +117,14 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.Access_levelsScalarFieldEnum = {
+  id: 'id',
+  accommodation: 'accommodation',
+  payments: 'payments',
+  events: 'events',
+  others: 'others'
+};
+
 exports.Prisma.AdminScalarFieldEnum = {
   id: 'id',
   created_at: 'created_at',
@@ -173,6 +181,7 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
+  access_levels: 'access_levels',
   admin: 'admin',
   complaint_responses: 'complaint_responses',
   complaints: 'complaints',
