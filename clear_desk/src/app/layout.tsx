@@ -40,7 +40,6 @@ export default function RootLayout({
             <Footer />
           </Providers>
             <Toaster expand={true} position="top-right" richColors />
-          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
