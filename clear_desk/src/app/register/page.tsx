@@ -4,13 +4,16 @@ import RegistrationForm from './RegistrationForm'
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-2xl">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          Complaint System - Registration
-        </h2>
+    <main className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-2xl p-6 space-y-6 rounded-xl shadow-lg bg-card border">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold">Complaint System - Registration</h1>
+          <p className="text-muted-foreground text-sm">
+            Create an account to manage complaints
+          </p>
+        </div>
         <RegistrationForm />
       </div>
-    </div>
+    </main>
   )
 }

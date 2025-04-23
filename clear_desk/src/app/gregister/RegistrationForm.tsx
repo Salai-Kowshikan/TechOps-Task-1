@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -9,10 +9,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { registerUser } from '@/lib/api/AuthApis';
 
 const schema = z.object({
-  fullName: z.string().min(3, 'Name must be at least 3 characters'),
+  fullName: z.string().min(3, 'Full Name must be at least 3 characters'),
   email: z.string().email('Invalid email'),
   phone: z.string().min(10, 'Phone number must be at least 10 digits'),
 });
+
 
 type FormData = z.infer<typeof schema>;
 
@@ -20,7 +21,7 @@ export default function RegistrationForm() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  React.useEffect(() => {
+  useEffect(() => {
     console.log('Session:', session, 'Status:', status);
   }, [session, status]);
 
@@ -38,8 +39,8 @@ export default function RegistrationForm() {
     },
   });
 
-  // Pre-populate form with session data from Google sign-in as a suggestion (optional)
-  React.useEffect(() => {
+ 
+  useEffect(() => {
     if (session?.user) {
       setValue('fullName', session.user.name || '');
       setValue('email', session.user.email || '');
@@ -51,7 +52,7 @@ export default function RegistrationForm() {
       await registerUser({
         fullName: data.fullName,
         email: data.email,
-        password: 'guser', // Replace with secure logic or user input
+        password: 'guser', 
         phone: data.phone,
       });
 
@@ -66,7 +67,7 @@ export default function RegistrationForm() {
   if (status === 'loading') return <div className="text-center">Loading...</div>;
   if (!session || !session.user) {
     console.log('No session or user data:', session);
-    // return <div className="text-center text-red-500">Please sign in with Google to register</div>;
+ 
   }
 
   return (

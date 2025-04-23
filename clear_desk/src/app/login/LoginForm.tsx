@@ -8,9 +8,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -21,7 +22,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -32,7 +32,6 @@ export default function LoginForm() {
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     setIsLoading(true);
-    setError(null);
 
     try {
       const result = await signIn("credentials", {
@@ -42,12 +41,13 @@ export default function LoginForm() {
       });
 
       if (result?.error) {
-        setError("Invalid email or password");
+        toast.error("Invalid email or password");
       } else if (result?.ok) {
+        toast.success("Login successful!");
         router.push("/user/dashboard");
       }
     } catch (err) {
-      setError("An error occurred during login");
+      toast.error("An error occurred during login");
     } finally {
       setIsLoading(false);
     }
@@ -55,12 +55,13 @@ export default function LoginForm() {
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    setError(null);
 
     try {
       await signIn("google", { callbackUrl: "/user/dashboard" });
+      toast.success("Google login successful!");
     } catch (err) {
-      setError("An error occurred during Google login");
+      toast.error("An error occurred during Google login");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -100,8 +101,6 @@ export default function LoginForm() {
           )}
         </div>
 
-        {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-
         <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading ? "Logging in..." : "Login"}
         </Button>
@@ -131,7 +130,7 @@ export default function LoginForm() {
           Forgot password?
         </Link>
         <Link
-          href="/auth/signup"
+          href="/register"
           className="text-primary hover:underline font-medium"
         >
           Create an account

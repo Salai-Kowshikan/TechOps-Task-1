@@ -4,6 +4,10 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { toast } from 'sonner'
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -23,39 +27,41 @@ export default function ForgotPasswordForm() {
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
       await axios.post('/api/auth/forgot-password', data)
-      alert('Password reset link sent (simulated)')
+      toast.success('Password reset link sent successfully!')
     } catch (err) {
-      alert('Error sending reset link')
+      toast.error('Error sending reset link. Please try again.')
       console.error(err)
     }
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 w-full max-w-md p-6 bg-white rounded-xl shadow-md"
-      >
-        <h1 className="text-xl font-semibold">Forgot Password</h1>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input
-            type="email"
-            {...register('email')}
-            className="w-full border rounded-xl px-4 py-2"
-            placeholder="example@email.com"
-          />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+    <main className="min-h-screen flex items-center justify-center px-4">
+      <Card className="w-full max-w-md p-6 space-y-6 rounded-xl shadow-lg bg-card border">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold">Forgot Password</h1>
+          <p className="text-muted-foreground text-sm">
+            Enter your email to receive a password reset link
+          </p>
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl font-medium transition"
-        >
-          Send Reset Link
-        </button>
-      </form>
-    </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <Input
+              type="email"
+              {...register('email')}
+              placeholder="example@email.com"
+              className="bg-background"
+            />
+            {errors.email && (
+              <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
+            )}
+          </div>
+
+          <Button type="submit" className="w-full">
+            Send Reset Link
+          </Button>
+        </form>
+      </Card>
+    </main>
   )
 }
