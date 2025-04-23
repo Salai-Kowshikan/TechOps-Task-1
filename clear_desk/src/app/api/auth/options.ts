@@ -1,6 +1,9 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { prisma } from '@/lib/prisma-client';
+import bcrypt from 'bcryptjs';
+import NextAuth from "next-auth";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,17 +14,44 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(credentials)
-        });
-        const user = await res.json();
-
-        if (res.ok && user) {
-          return user;
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Missing credentials');
         }
-        return null;
+
+        let user = null;
+        let userType = 'user';
+        let admin = null;
+        
+        user = await prisma.users.findUnique({
+          where: { email: credentials.email },
+        });
+        if (!user) {
+          admin = await prisma.admin.findUnique({
+            where: { email: credentials.email },
+          });
+          
+          if (admin) {
+            user = admin;
+            userType = 'admin';
+          }
+        }
+
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        const isMatch = await bcrypt.compare(credentials.password, user.password);
+        if (!isMatch) {
+          throw new Error('Invalid password');
+        }
+
+        return {
+          id: user.id.toString(),
+          email: user.email,
+          name: user.name,
+          type: userType,
+          ...(userType === 'admin' && { is_admin: admin?.is_admin }),
+        };
       }
     }),
     GoogleProvider({
@@ -30,7 +60,23 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account }) {
+      if (account?.provider === 'google' && user.email) {
+        const userInUsersTable = await prisma.users.findUnique({
+          where: { email: user.email },
+        });
+
+        const userInAdminTable = await prisma.admin.findUnique({
+          where: { email: user.email },
+        });
+
+        if (!userInUsersTable && !userInAdminTable) {
+          return '/gregister';
+        }
+      }
+      return true;
+    },
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -39,18 +85,45 @@ export const authOptions: NextAuthOptions = {
         token.is_admin = user.is_admin;
         token.token = user.token;
         token.phoneNumber = user.phoneNumber;
+        
+        if (account?.provider === 'google' && user.email) {
+          let dbUser = await prisma.users.findUnique({
+            where: { email: user.email },
+          });
+          let userType = 'user';
+
+          if (!dbUser) {
+            dbUser = await prisma.admin.findUnique({
+              where: { email: user.email },
+            });
+            userType = 'admin';
+          }
+
+          if (dbUser) {
+            token.id = dbUser.id.toString();
+            token.type = userType;
+            if (dbUser.token) token.token = dbUser.token;
+            if ('phoneNumber' in dbUser && dbUser.phoneNumber) {
+              token.phoneNumber = dbUser.phoneNumber;
+            }
+          } else {
+            token.tempName = user.name || '';
+            token.tempEmail = user.email || '';
+            token.sub = user.id;
+          }
+        }
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.email = token.email;
-        session.user.name = token.name;
-        session.user.type = token.type;
+        session.user.id = token.sub as string || token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string || token.tempName as string || '';
+        session.user.type = token.type as string || 'user';
         session.user.is_admin = token.is_admin;
-        session.user.token = token.token;
-        session.user.phoneNumber = token.phoneNumber;
+        session.user.token = token.token as string;
+        session.user.phoneNumber = token.phoneNumber as string | undefined;
       }
       return session;
     }
@@ -59,7 +132,23 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',
   },
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, 
+    updateAge: 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
+  },
 };
+
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
