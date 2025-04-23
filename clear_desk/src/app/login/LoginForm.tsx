@@ -13,6 +13,8 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { toast } from "sonner";
 import useUserDetailStore from "@/Store/userDetailStore";
+import { useAdminStore } from "@/Store/useAdminStore";
+import type { AccessLevel } from "@/Store/useAdminStore";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -25,6 +27,8 @@ export default function LoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const setUser = useUserDetailStore((state) => state.setUser);
+  const setIsSuperAdmin = useAdminStore((state) => state.setIsSuperAdmin);
+  const setModeratorCategoryAccess = useAdminStore((state) => state.setModeratorCategoryAccess);
 
   const {
     register,
@@ -62,7 +66,66 @@ export default function LoginForm() {
           });
           
           if (sessionData.user.type === 'admin') {
-            router.push("/admin/dashboard");
+            if (sessionData.user.is_admin === true) {
+              setIsSuperAdmin(true);
+              router.push("/admin/dashboard");
+            } else {
+              console.log("moderator");
+              setIsSuperAdmin(false);
+              
+              try {
+                const accessResponse = await fetch(`/api/auth/roles?id=${sessionData.user.id}`);
+                
+                if (accessResponse.ok) {
+                  const accessData = await accessResponse.json();
+                  console.log("Moderator access levels:", accessData);
+                  
+                  const categoryAccess: { category: string; access: AccessLevel }[] = [];
+                  
+                  const mapAccess = (access: string): AccessLevel => {
+                    if (access === "read_write") return "read/write";
+                    if (access === "read") return "read";
+                    return "no_access";
+                  };
+                  
+                  if (accessData.accommodation && accessData.accommodation !== "no_access") {
+                    categoryAccess.push({
+                      category: 'accommodation',
+                      access: mapAccess(accessData.accommodation)
+                    });
+                  }
+                  
+                  if (accessData.payments && accessData.payments !== "no_access") {
+                    categoryAccess.push({
+                      category: 'payments',
+                      access: mapAccess(accessData.payments)
+                    });
+                  }
+                  
+                  if (accessData.events && accessData.events !== "no_access") {
+                    categoryAccess.push({
+                      category: 'events',
+                      access: mapAccess(accessData.events)
+                    });
+                  }
+                  
+                  if (accessData.others && accessData.others !== "no_access") {
+                    categoryAccess.push({
+                      category: 'others',
+                      access: mapAccess(accessData.others)
+                    });
+                  }
+                  
+                  setModeratorCategoryAccess(categoryAccess);
+                } else {
+                  console.error("Failed to fetch moderator access levels");
+                }
+              } catch (error) {
+                console.error("Error fetching moderator access levels:", error);
+              }
+              
+              router.push("/admin/dashboard");
+            }
           } else {
             router.push("/user/dashboard");
           }

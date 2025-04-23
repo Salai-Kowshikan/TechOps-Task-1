@@ -9,8 +9,8 @@ declare module "next-auth" {
       name: string;
       type: string;
       is_admin: boolean;
-      token: string;
-      phoneNumber: string;
+      token?: string;
+      phoneNumber?: string;
     } & DefaultSession["user"];
   }
 
@@ -20,8 +20,9 @@ declare module "next-auth" {
     name: string;
     type: string;
     is_admin: boolean;
-    token: string;
-    phoneNumber: string;
+    token?: string;
+    phoneNumber?: string;
+    image?: string | null;
   }
 }
 
@@ -32,7 +33,9 @@ declare module "next-auth/jwt" {
     name: string;
     type: string;
     is_admin: boolean;
-    token: string;
-    phoneNumber: string;
+    token?: string;
+    phoneNumber?: string;
+    tempName?: string;
+    tempEmail?: string;
   }
 }
