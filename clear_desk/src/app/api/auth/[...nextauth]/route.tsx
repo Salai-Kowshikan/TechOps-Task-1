@@ -21,16 +21,22 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Missing credentials');
         }
 
-        let user = await prisma.users.findUnique({
+        let user = null;
+        let userType = 'user';
+        let admin = null;
+        
+        user = await prisma.users.findUnique({
           where: { email: credentials.email },
         });
-        let userType = 'user';
-
         if (!user) {
-          user = await prisma.admin.findUnique({
+          admin = await prisma.admin.findUnique({
             where: { email: credentials.email },
           });
-          userType = 'admin';
+          
+          if (admin) {
+            user = admin;
+            userType = 'admin';
+          }
         }
 
         if (!user) {
@@ -47,6 +53,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           type: userType,
+          ...(userType === 'admin' && { is_admin: admin?.is_admin }),
         };
       },
     }),
@@ -66,7 +73,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!userInUsersTable && !userInAdminTable) {
-          return '/gregister'; // Redirect to registration for new users
+          return '/gregister';
         }
       }
       return true;
@@ -75,6 +82,9 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.type = user.type;
+        if (user.type === 'admin' && user.is_admin !== undefined) {
+          token.is_admin = user.is_admin;
+        }
         if (account?.provider === 'google' && user.email) {
           let dbUser = await prisma.users.findUnique({
             where: { email: user.email },
@@ -96,12 +106,11 @@ export const authOptions: NextAuthOptions = {
               token.phoneNumber = dbUser.phoneNumber;
             }
           } else {
-            // Store temporary data for new Google users
             token.tempName = user.name || '';
             console.log(token.tempName);
             token.tempEmail = user.email || '';
             console.log(token.tempEmail)
-            token.sub = user.id; // Use sub as a unique identifier
+            token.sub = user.id;
             console.log(token.sub);
             
           }
@@ -111,7 +120,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.sub as string || token.id as string; // Use sub for Google users
+        session.user.id = token.sub as string || token.id as string;
         session.user.type = token.type as string || 'user';
         session.user.token = token.token as string;
 
@@ -119,14 +128,19 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.tempName || session.user.name || '';
         session.user.email = token.tempEmail || session.user.email || '';
         session.user.phoneNumber = token.phoneNumber as string | undefined;
+
+        // Add is_admin to session if user is admin
+        if (token.type === 'admin') {
+          session.user.is_admin = token.is_admin;
+        }
       }
       return session;
     },
   },
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours
+    maxAge: 30 * 24 * 60 * 60, 
+    updateAge: 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   cookies: {

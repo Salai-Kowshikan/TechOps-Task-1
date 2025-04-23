@@ -12,6 +12,8 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { toast } from "sonner";
+import useUserDetailStore from "@/Store/userDetailStore";
+import { useSession } from "next-auth/react";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -23,6 +25,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const setUser = useUserDetailStore((state) => state.setUser);
 
   const {
     register,
@@ -44,7 +47,28 @@ export default function LoginForm() {
         toast.error("Invalid email or password");
       } else if (result?.ok) {
         toast.success("Login successful!");
-        router.push("/user/dashboard");
+        const session = await fetch('/api/auth/session');
+        const sessionData = await session.json();
+        console.log("Session data:", sessionData);
+
+        if (sessionData?.user) {
+          setUser({
+            id: sessionData.user.id,
+            email: sessionData.user.email,
+            name: sessionData.user.name,
+            type: sessionData.user.type,
+            is_admin: sessionData.user.is_admin,
+            token: sessionData.user.token,
+            phoneNumber: sessionData.user.phoneNumber,
+          });
+          
+          // Redirect based on user type
+          if (sessionData.user.type === 'admin') {
+            router.push("/admin/dashboard");
+          } else {
+            router.push("/user/dashboard");
+          }
+        }
       }
     } catch (err) {
       toast.error("An error occurred during login");
