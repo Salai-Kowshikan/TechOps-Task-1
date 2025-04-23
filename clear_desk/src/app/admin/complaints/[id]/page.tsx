@@ -57,7 +57,7 @@ export default function ComplaintDetailPage() {
       try {
         const res = await axios.get(`/api/complaint/${id}`);
         toast.success('Complaint details fetched successfully', { id: toastId });
-        return res.data.data; // Extract the `data` field
+        return res.data.data;
       } catch (error) {
         toast.error('Failed to fetch complaint details', { id: toastId });
         throw error;
@@ -71,7 +71,7 @@ export default function ComplaintDetailPage() {
     queryFn: async () => {
       if (complaint?.user_id) {
         const res = await axios.get(`/api/user/${complaint.user_id}`);
-        return res.data; // Use the user object directly
+        return res.data;
       }
       return { name: 'Unknown' };
     },
@@ -82,105 +82,124 @@ export default function ComplaintDetailPage() {
     isSuperAdmin ||
     !!moderatorCategoryAccess.find((a) => a.category === complaint?.category && a.access === 'read/write');
 
-    const sendResponseMutation = useMutation({
-      mutationFn: async () => {
-        const toastId = toast.loading('Sending response...');
-        try {
-          const res = await axios.post(`/api/complaint/${id}`, {
-            id,
-            message: responseText,
-            sentBy: 'admin',
-          });
-          toast.success('Response sent successfully', { id: toastId });
-          return res.data.data; // Extract the `data` field
-        } catch (error) {
-          toast.error('Failed to send response', { id: toastId });
-          throw error;
-        }
-      },
-      onSuccess: () => {
-        setResponseText('');
-        queryClient.invalidateQueries({ queryKey: ['complaint', id] });
-      },
-    });
-
-    const updateStatus = async (newStatus: Complaint['status']) => {
-      const toastId = toast.loading('Updating complaint status...');
+  const sendResponseMutation = useMutation({
+    mutationFn: async () => {
+      const toastId = toast.loading('Sending response...');
       try {
-        setStatusUpdating(true);
-        const res = await axios.put(`/api/complaint/${id}/status`, { id, status: newStatus });
-        if (res.data.success) {
-          toast.success(res.data.message, { id: toastId }); // Use the `message` field
-        } else {
-          toast.error(res.data.message || 'Failed to update complaint status', { id: toastId });
-        }
-        queryClient.invalidateQueries({ queryKey: ['complaint', id] });
+        const res = await axios.post(`/api/complaint/${id}`, {
+          id,
+          message: responseText,
+          sentBy: 'admin',
+        });
+        toast.success('Response sent successfully', { id: toastId });
+        return res.data.data;
       } catch (error) {
-        toast.error('Something went wrong while updating status', { id: toastId });
-        console.error(error);
-      } finally {
-        setStatusUpdating(false);
+        toast.error('Failed to send response', { id: toastId });
+        throw error;
       }
-    };
+    },
+    onSuccess: () => {
+      setResponseText('');
+      queryClient.invalidateQueries({ queryKey: ['complaint', id] });
+    },
+  });
+
+  const updateStatus = async (newStatus: Complaint['status']) => {
+    const toastId = toast.loading('Updating complaint status...');
+    try {
+      setStatusUpdating(true);
+      const res = await axios.put(`/api/complaint/${id}/status`, { id, status: newStatus });
+      if (res.data.success) {
+        toast.success(res.data.message, { id: toastId });
+      } else {
+        toast.error(res.data.message || 'Failed to update complaint status', { id: toastId });
+      }
+      queryClient.invalidateQueries({ queryKey: ['complaint', id] });
+    } catch (error) {
+      toast.error('Something went wrong while updating status', { id: toastId });
+      console.error(error);
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
 
   if (complaintLoading || userLoading || !complaint)
     return <p className="text-center mt-10">Loading...</p>;
 
   const imageUrls = complaint.image_url || [];
-  const responses: ResponseItem[] =
-  complaint?.complaint_responses?.responses || [];
+  const responses: ResponseItem[] = complaint?.complaint_responses?.responses || [];
 
   const getNextStatus = (status: Complaint['status']) => {
     if (status === 'pending') return 'in progress';
     if (status === 'in progress') return 'resolved';
     return null;
   };
-   console.log(user,complaint)
+
   const nextStatus = getNextStatus(complaint.status);
 
   return (
     <div className="min-h-screen bg-background px-4 py-6">
       <Card className="max-w-3xl mx-auto">
         <CardHeader className="flex justify-between items-center mb-2 px-0">
-          <Button
-            variant="link"
-            onClick={() => router.back()}
-            className="text-blue-600 hover:underline px-0"
-          >
-            <ArrowLeft className="w-4 h-4 mr-1" />
-            Back to Complaints
-          </Button>
-          <Button asChild variant="link" className="text-blue-600 hover:underline px-0">
-            <Link href="/admin/dashboard">
-              <Home className="w-4 h-4 mr-1" />
-              Dashboard
-            </Link>
-          </Button>
+        <Button
+  variant="link"
+  onClick={() => router.back()}
+  className="text-blue-700 dark:text-blue-300 hover:underline px-0"
+>
+  <ArrowLeft className="w-4 h-4 mr-1" />
+  Back to Complaints
+</Button>
+
+<Button asChild variant="link" className="text-blue-700 dark:text-blue-300 hover:underline px-0">
+  <Link href="/admin/dashboard">
+    <Home className="w-4 h-4 mr-1" />
+    Dashboard
+  </Link>
+</Button>
+
         </CardHeader>
+
         <CardContent>
           <CardTitle className="text-2xl font-bold mb-2">{complaint.title}</CardTitle>
+
           <p className="text-sm text-muted-foreground mb-1">
             {new Date(complaint.created_at).toLocaleDateString()}
           </p>
-          <p className="text-sm text-muted-foreground mb-1">By: {user?.name || 'Unknown User'}</p>
+
+          <p className="text-sm text-muted-foreground mb-2">By: <strong>{user?.name || 'Unknown User'}</strong></p>
+
           <p className="text-muted-foreground mb-3">{complaint.description}</p>
+
           <Separator className="my-3" />
+
           <p className="text-sm mb-1">Category: {complaint.category}</p>
-          <p className="text-sm mb-3">
-            Status:{' '}
-            <span className="font-semibold capitalize">{complaint.status}</span>
-            {nextStatus && canRespond && (
-              <Button
-                className="ml-3 text-xs bg-amber-500 hover:bg-amber-600 text-white"
-                size="sm"
-                onClick={() => updateStatus(nextStatus)}
-                disabled={statusUpdating}
-              >
-                Mark as {nextStatus}
-                <ArrowRight className="ml-1 h-3 w-3" />
-              </Button>
-            )}
-          </p>
+          <p className="text-sm mb-3 flex items-center">
+  Status:{' '}
+  <span
+    className={clsx(
+      'ml-2 px-2 py-0.5 rounded-full text-xs font-semibold capitalize',
+      complaint.status === 'pending' && 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100',
+      complaint.status === 'in progress' && 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100',
+      complaint.status === 'resolved' && 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
+    )}
+  >
+    {complaint.status}
+  </span>
+  
+  {nextStatus && canRespond && (
+    <Button
+      size="sm"
+      variant="outline"
+      className="ml-2 text-xs flex items-center gap-1 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+      onClick={() => updateStatus(nextStatus)}
+      disabled={statusUpdating}
+    >
+      Mark as {nextStatus}
+      <ArrowRight className="w-4 h-4" />
+    </Button>
+  )}
+</p>
+
 
           {imageUrls.length > 0 && (
             <ScrollArea className="flex gap-4 overflow-x-auto mb-6">
@@ -190,34 +209,35 @@ export default function ComplaintDetailPage() {
                     key={i}
                     src={url}
                     alt="Complaint Image"
-                    className="w-32 h-32 object-cover rounded"
+                    className="w-32 h-32 object-cover rounded-md border border-muted hover:scale-105 transition-transform duration-200"
                   />
                 ))}
               </div>
             </ScrollArea>
           )}
+          <Separator className="my-3" />
 
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">Conversation</h3>
-            {responses?.length === 0 ? (
+            {responses.length === 0 ? (
               <p className="text-muted-foreground">No messages yet.</p>
             ) : (
-              <ul className="space-y-2">
-                {(responses ?? []).map((res, idx) => (
+              <ul className="space-y-3">
+                {responses.map((res, idx) => (
                   <li
                     key={idx}
                     className={clsx(
-                      'p-3 rounded max-w-md',
+                      'p-3 rounded-xl max-w-md shadow-sm transition-colors duration-300',
                       res.sent_by === 'admin'
-                        ? 'bg-blue-100 dark:bg-blue-900 text-right ml-auto'
-                        : 'bg-gray-100 dark:bg-gray-800 text-left'
+                        ? 'bg-blue-500/10 dark:bg-blue-400/20 text-right ml-auto border border-blue-300 dark:border-blue-600'
+                        : 'bg-zinc-200 dark:bg-zinc-700 text-left border border-zinc-300 dark:border-zinc-600'
                     )}
                   >
-                    <p className="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                    <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">
                       {res.sent_by === 'admin' ? 'Admin' : 'User'}
                     </p>
-                    <p className="text-sm text-gray-800 dark:text-gray-100">{res.message}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-sm text-foreground dark:text-white">{res.message}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">
                       {new Date(res.created_at).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit',
@@ -236,11 +256,12 @@ export default function ComplaintDetailPage() {
                 onChange={(e) => setResponseText(e.target.value)}
                 placeholder="Type your response..."
                 rows={3}
-                className="mb-2"
+                className="mb-3 focus-visible:ring-2 focus-visible:ring-blue-400 transition-all"
               />
               <Button
                 onClick={() => sendResponseMutation.mutate()}
                 disabled={sendResponseMutation.isPending || !responseText}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {sendResponseMutation.isPending ? 'Sending...' : 'Send Response'}
               </Button>

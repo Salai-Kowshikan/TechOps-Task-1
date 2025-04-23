@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 interface ComplaintCardProps {
   complaint_id: string;
@@ -35,15 +36,13 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
   category,
   status,
 }) => {
-  const [messages, setMessages] = useState<any[]>([]); 
+  const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
 
   const fetchMessages = async () => {
     try {
       const response = await fetch(`/api/response?complaint_id=${complaint_id}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch messages");
-      }
+      if (!response.ok) throw new Error("Failed to fetch messages");
       const data = await response.json();
       setMessages(data.responses || []);
     } catch (error) {
@@ -53,7 +52,6 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
 
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
-
     try {
       const response = await fetch("/api/response", {
         method: "POST",
@@ -64,73 +62,77 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
           message: newMessage,
         }),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to send message");
-      }
-
+      if (!response.ok) throw new Error("Failed to send message");
       const data = await response.json();
       setMessages(data.updatedResponses);
-      setNewMessage(""); 
+      setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
 
+  const statusColor =
+    status.toLowerCase() === "resolved"
+      ? "bg-green-100 text-green-800"
+      : status.toLowerCase() === "in progress"
+      ? "bg-yellow-100 text-yellow-800"
+      : "bg-red-100 text-red-800";
+
   return (
-    <Card>
+    <Card className="rounded-xl ml-3 mr-3 mb-3 shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="text-lg font-semibold text-primary/90">
+          {title}
+        </CardTitle>
+        <CardDescription className="text-muted-foreground">
+          {description}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col h-full justify-between">
-        <div>
-          <Badge>{category}</Badge> <Badge>{status}</Badge>
+        <div className="flex items-center gap-2 mb-2">
+          <Badge variant="secondary">{category}</Badge>
+          <Badge className={cn("capitalize", statusColor)}>{status}</Badge>
         </div>
         <div>
-          <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-            {images.map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt={`Image ${index + 1}`}
-                style={{ width: "50px", height: "50px", objectFit: "cover" }}
-              />
-            ))}
-          </div>
+          {images.map((image, index) => (
+            <img
+              key={index}
+              src={image ? image : "E:\SD_CEG_Tech_Forum\Techops\Project\complaint-handle\public\file.svg"} 
+              alt={`Image ${index + 1}`}
+              className="w-16 h-16 rounded object-cover border"
+            />
+          ))}
         </div>
       </CardContent>
-      <CardFooter className="ml-auto">
+      <CardFooter className="justify-end ml-auto">
         <Dialog>
           <DialogTrigger asChild>
-            <Button onClick={fetchMessages}>Open</Button>
+            <Button variant="outline" size="sm" onClick={fetchMessages}>
+              Open Chat
+            </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Chat</DialogTitle>
+              <DialogTitle>Discussion</DialogTitle>
             </DialogHeader>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "300px",
-              }}
-            >
-              <div className="flex-1 overflow-y-auto">
+            <div className="flex flex-col h-[300px]">
+              <div className="flex-1 overflow-y-auto pr-2 space-y-2">
                 {messages.map((msg, index) => (
                   <div
                     key={index}
-                    className={`p-3 rounded-lg max-w-xs mb-2 ${
+                    className={cn(
+                      "p-3 rounded-lg max-w-xs text-sm",
                       msg.sent_by === "admin"
-                        ? "bg-blue-100 text-right ml-auto"
-                        : "bg-gray-100 text-left"
-                    }`}
+                        ? "bg-blue-500/10 dark:bg-blue-400/20 text-right ml-auto"
+                        : "bg-gray-200 dark:bg-gray-700 text-left"
+                    )}
+                    
                   >
-                    <p className="text-sm font-semibold">
+                    <p className="font-semibold mb-1">
                       {msg.sent_by === "admin" ? "Admin" : "User"}
                     </p>
-                    <p className="text-sm">{msg.message}</p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p>{msg.message}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
                       {new Date(msg.created_at).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
@@ -139,20 +141,16 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
                   </div>
                 ))}
               </div>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div className="flex items-center gap-2 mt-2">
                 <Input
                   type="text"
                   placeholder="Type your message..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
-                  style={{
-                    flex: 1,
-                    padding: "8px",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                  }}
                 />
-                <Button onClick={sendMessage}>Send</Button>
+                <Button size="sm" onClick={sendMessage}>
+                  Send
+                </Button>
               </div>
             </div>
           </DialogContent>
@@ -163,3 +161,4 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
 };
 
 export default ComplaintCard;
+

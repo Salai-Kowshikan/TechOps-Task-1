@@ -9,9 +9,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
+import { motion } from 'framer-motion'
+import clsx from 'clsx';
 
-
-// Complaint type
 type Complaint = {
   id: string
   title: string
@@ -21,15 +21,15 @@ type Complaint = {
   created_at: string
 }
 
-const statusOptions = ['all', 'pending', 'in progress', 'resolved']
-const categoryOptions = ['all', 'accommodation', 'events', 'payments', 'others']
+const statusOptions = ['pending', 'in progress', 'resolved']
+const categoryOptions = ['accommodation', 'events', 'payments', 'others']
 
 export default function AdminDashboard() {
   const isSuperAdmin = useAdminStore((state) => state.isSuperAdmin)
   const moderatorCategoryAccess = useAdminStore((state) => state.moderatorCategoryAccess)
 
-  const [status, setStatus] = useState('all')
-  const [category, setCategory] = useState('all')
+  const [status, setStatus] = useState<string[]>([])
+  const [category, setCategory] = useState<string[]>([])
 
   const { data: complaints = [], isLoading, isError } = useQuery<Complaint[]>({
     queryKey: ['complaints'],
@@ -63,12 +63,12 @@ export default function AdminDashboard() {
       result = result.filter((c) => allowedCategories.includes(c.category.toLowerCase()))
     }
 
-    if (status !== 'all') {
-      result = result.filter((c) => c.status.toLowerCase() === status)
+    if (status.length && !status.includes('all')) {
+      result = result.filter((c) => status.includes(c.status.toLowerCase()))
     }
 
-    if (category !== 'all') {
-      result = result.filter((c) => c.category.toLowerCase() === category)
+    if (category.length && !category.includes('all')) {
+      result = result.filter((c) => category.includes(c.category.toLowerCase()))
     }
 
     return result
@@ -76,7 +76,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-muted px-4 py-6">
-      <Card className="w-full max-w-4xl">
+      <Card className="w-full max-w-6xl">
         <CardHeader>
           <CardTitle className="text-3xl text-center">Admin Dashboard</CardTitle>
         </CardHeader>
@@ -86,7 +86,7 @@ export default function AdminDashboard() {
           {isSuperAdmin && (
             <div className="flex justify-end mb-6">
               <Link href="/admin/moderators">
-                <Button>Manage Moderators</Button>
+                <Button className="hover:bg-blue-500 transition-colors">Manage Moderators</Button>
               </Link>
             </div>
           )}
@@ -99,8 +99,15 @@ export default function AdminDashboard() {
                 {statusOptions.map((s) => (
                   <Button
                     key={s}
-                    variant={status === s ? 'default' : 'outline'}
-                    onClick={() => setStatus(s)}
+                    variant={status.includes(s) ? 'default' : 'outline'}
+                    onClick={() => {
+                      if (status.includes(s)) {
+                        setStatus(status.filter((item) => item !== s))
+                      } else {
+                        setStatus([...status, s])
+                      }
+                    }}
+                    className="transition-all hover:bg-gray-200 dark:hover:bg-gray-700"
                   >
                     {s.charAt(0).toUpperCase() + s.slice(1)}
                   </Button>
@@ -114,8 +121,15 @@ export default function AdminDashboard() {
                 {categoryOptions.map((c) => (
                   <Button
                     key={c}
-                    variant={category === c ? 'default' : 'outline'}
-                    onClick={() => setCategory(c)}
+                    variant={category.includes(c) ? 'default' : 'outline'}
+                    onClick={() => {
+                      if (category.includes(c)) {
+                        setCategory(category.filter((item) => item !== c))
+                      } else {
+                        setCategory([...category, c])
+                      }
+                    }}
+                    className="transition-all hover:bg-gray-200 dark:hover:bg-gray-700"
                   >
                     {c.charAt(0).toUpperCase() + c.slice(1)}
                   </Button>
@@ -132,7 +146,7 @@ export default function AdminDashboard() {
           ) : filteredComplaints.length === 0 ? (
             <p className="text-center text-muted-foreground">No complaints found for the selected filters.</p>
           ) : (
-            <ul className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredComplaints.map((c) => {
                 const access = moderatorCategoryAccess.find(
                   (a) => a.category.toLowerCase() === c.category.toLowerCase()
@@ -140,26 +154,44 @@ export default function AdminDashboard() {
                 const canRespond = isSuperAdmin || access === 'read/write'
 
                 return (
-                  <Card key={c.id} className="shadow-sm hover:shadow-md transition-shadow">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-lg">{c.title}</CardTitle>
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(c.created_at).toLocaleDateString()}
-                      </span>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground mb-1">Category: {c.category}</p>
-                      <p className="text-sm text-muted-foreground mb-3">Status: {c.status}</p>
-                      <Link href={`/admin/complaints/${c.id}`}>
-                        <Button variant={canRespond ? 'default' : 'default'} disabled={!canRespond}>
-                          {canRespond ? 'View & Respond' : 'View'}
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
+                  <motion.div
+                    key={c.id}
+                    className="shadow-sm hover:shadow-lg transition-all"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Card className="transition-shadow">
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-lg">{c.title}</CardTitle>
+                        <span className="text-sm text-muted-foreground">
+                          {new Date(c.created_at).toLocaleDateString()}
+                        </span>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-m text-muted-foreground mb-1">Category: {c.category}</p>
+                        <p className="text-m text-muted-foreground mb-3">Status: 
+                            <span
+                              className={clsx(
+                                'ml-2 px-2 py-0.5 rounded-full text-xs font-semibold capitalize',
+                                c.status === 'pending' && 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100',
+                                c.status === 'in progress' && 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100',
+                                c.status === 'resolved' && 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
+                              )}
+                            >
+                              {c.status}
+                            </span>
+                        </p>
+                        <Link href={`/admin/complaints/${c.id}`}>
+                          <Button variant={canRespond ? 'default' : 'outline'} disabled={!canRespond}>
+                            {canRespond ? 'View & Respond' : 'View'}
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 )
               })}
-            </ul>
+            </div>
           )}
         </CardContent>
       </Card>
