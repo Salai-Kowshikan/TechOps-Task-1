@@ -19,6 +19,7 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select'
+import { toast } from 'sonner'
 
 const categories = ['accommodation', 'payments', 'events', 'others']
 const accessOptions = ['no_access', 'read', 'read/write']
@@ -41,7 +42,14 @@ export default function ManageModeratorsPage() {
   }, [isSuperAdmin, router])
 
   useEffect(() => {
-    axios.get('/api/moderators').then((res) => setModerators(res.data))
+    axios.get('/api/moderators').then((res) => {
+      const fetchedModerators = res.data.data.map((moderator: any) => ({
+        id: moderator.id,
+        name: moderator.name,
+        accessLevel: moderator.access_levels, // Map access_levels directly
+      }));
+      setModerators(fetchedModerators);
+    });
   }, [])
 
   const handleChange = async (modId: string, category: string, newLevel: string) => {
@@ -65,13 +73,20 @@ export default function ManageModeratorsPage() {
             : mod
         )
       )
+
+      toast.success(
+       `Access level for "${category}" updated to "${newLevel}".`,
+      )
     } catch (error) {
       console.error('Error updating access level:', error)
+
+      toast.error( 'Failed to update access level. Please try again.')
     }
   }
 
   return (
     <div className="min-h-screen p-8 bg-background text-foreground">
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-foreground">Manage Moderators</h1>
         <div className="flex gap-4">
@@ -80,7 +95,7 @@ export default function ManageModeratorsPage() {
           </Link>
           <Link href="/admin/moderators/signup">
             <Button className="bg-green-600 hover:bg-green-700 text-white">
-              Moderator Signup
+              Create Moderator
             </Button>
           </Link>
         </div>
