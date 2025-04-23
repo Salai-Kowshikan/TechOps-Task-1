@@ -13,7 +13,6 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { toast } from "sonner";
 import useUserDetailStore from "@/Store/userDetailStore";
-import { useSession } from "next-auth/react";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -62,7 +61,6 @@ export default function LoginForm() {
             phoneNumber: sessionData.user.phoneNumber,
           });
           
-          // Redirect based on user type
           if (sessionData.user.type === 'admin') {
             router.push("/admin/dashboard");
           } else {
