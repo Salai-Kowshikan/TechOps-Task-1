@@ -14,6 +14,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import useUserDetailStore from "@/Store/userDetailStore";
 import { useAdminStore } from "@/Store/useAdminStore";
+import type { AccessLevel } from "@/Store/useAdminStore";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -78,37 +79,43 @@ export default function LoginForm() {
                 if (accessResponse.ok) {
                   const accessData = await accessResponse.json();
                   console.log("Moderator access levels:", accessData);
-                  const categoryAccess = [];
+                  
+                  const categoryAccess: { category: string; access: AccessLevel }[] = [];
+                  
+                  const mapAccess = (access: string): AccessLevel => {
+                    if (access === "read_write") return "read/write";
+                    if (access === "read") return "read";
+                    return "no_access";
+                  };
                   
                   if (accessData.accommodation && accessData.accommodation !== "no_access") {
                     categoryAccess.push({
                       category: 'accommodation',
-                      access: accessData.accommodation === "read_write" ? "read/write" : "read"
+                      access: mapAccess(accessData.accommodation)
                     });
                   }
                   
                   if (accessData.payments && accessData.payments !== "no_access") {
                     categoryAccess.push({
                       category: 'payments',
-                      access: accessData.payments === "read_write" ? "read/write" : "read"
+                      access: mapAccess(accessData.payments)
                     });
                   }
                   
                   if (accessData.events && accessData.events !== "no_access") {
                     categoryAccess.push({
                       category: 'events',
-                      access: accessData.events === "read_write" ? "read/write" : "read"
+                      access: mapAccess(accessData.events)
                     });
                   }
                   
                   if (accessData.others && accessData.others !== "no_access") {
                     categoryAccess.push({
                       category: 'others',
-                      access: accessData.others === "read_write" ? "read/write" : "read"
+                      access: mapAccess(accessData.others)
                     });
                   }
                   
-                  // Set moderator category access in the store
                   setModeratorCategoryAccess(categoryAccess);
                 } else {
                   console.error("Failed to fetch moderator access levels");

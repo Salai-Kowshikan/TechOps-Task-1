@@ -4,6 +4,18 @@ import GoogleProvider from "next-auth/providers/google";
 import { prisma } from '@/lib/prisma-client';
 import bcrypt from 'bcryptjs';
 import NextAuth from "next-auth";
+import { User } from "next-auth";
+
+// Extend the built-in User type
+interface CustomUser extends User {
+  id: string;
+  email: string;
+  name: string;
+  type: string;
+  is_admin: boolean; // Make this non-optional
+  token?: string;
+  phoneNumber?: string;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -40,17 +52,20 @@ export const authOptions: NextAuthOptions = {
           throw new Error('User not found');
         }
 
-        const isMatch = await bcrypt.compare(credentials.password, user.password);
+        const isMatch = await bcrypt.compare(credentials.password, user.password || '');
         if (!isMatch) {
           throw new Error('Invalid password');
         }
 
+        // Make sure is_admin has a default value to satisfy the type requirements
         return {
           id: user.id.toString(),
           email: user.email,
           name: user.name,
           type: userType,
-          ...(userType === 'admin' && { is_admin: admin?.is_admin }),
+          is_admin: userType === 'admin' ? !!admin?.is_admin : false,
+          // Add any other fields required by User interface
+          image: null,
         };
       }
     }),
@@ -81,10 +96,14 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
-        token.type = user.type;
-        token.is_admin = user.is_admin;
-        token.token = user.token;
-        token.phoneNumber = user.phoneNumber;
+        token.type = (user as CustomUser).type;
+        token.is_admin = (user as CustomUser).is_admin;
+        if ((user as CustomUser).token) {
+          token.token = (user as CustomUser).token;
+        }
+        if ((user as CustomUser).phoneNumber) {
+          token.phoneNumber = (user as CustomUser).phoneNumber;
+        }
         
         if (account?.provider === 'google' && user.email) {
           let dbUser = await prisma.users.findUnique({
@@ -99,14 +118,12 @@ export const authOptions: NextAuthOptions = {
             userType = 'admin';
           }
           
-          
-
           if (dbUser) {
             token.id = dbUser.id.toString();
             token.type = userType;
             if (dbUser.token) token.token = dbUser.token;
-            if ('phoneNumber' in dbUser && dbUser.phoneNumber) {
-              token.phoneNumber = dbUser.phoneNumber;
+            if ('ph_number' in dbUser && dbUser.ph_number) {
+              token.phoneNumber = dbUser.ph_number;
             }
           } else {
             token.tempName = user.name || '';
@@ -119,13 +136,19 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.sub as string || token.id as string;
+        session.user.id = (token.sub as string) || (token.id as string);
         session.user.email = token.email as string;
-        session.user.name = token.name as string || token.tempName as string || '';
-        session.user.type = token.type as string || 'user';
-        session.user.is_admin = token.is_admin;
-        session.user.token = token.token as string;
-        session.user.phoneNumber = token.phoneNumber as string | undefined;
+        session.user.name = (token.name as string) || (token.tempName as string) || '';
+        session.user.type = (token.type as string) || 'user';
+        if (token.is_admin !== undefined) {
+          session.user.is_admin = token.is_admin as boolean;
+        }
+        if (token.token) {
+          session.user.token = token.token as string;
+        }
+        if (token.phoneNumber) {
+          session.user.phoneNumber = token.phoneNumber as string;
+        }
       }
       return session;
     }

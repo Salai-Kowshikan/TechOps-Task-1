@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type AccessLevel = 'read' | 'read/write'
+export type AccessLevel = 'read' | 'read/write' | 'no_access'
 
 interface AdminStore {
   isSuperAdmin: boolean
