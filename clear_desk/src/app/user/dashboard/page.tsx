@@ -3,9 +3,20 @@ import ComplaintForm from "@/components/UserDashboard/ComplaintForm";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import ComplaintCard from "@/components/ComplaintCard";
+import { useEffect } from "react";
+import useUserDetailStore from "@/Store/userDetailStore";
+import { useSession } from "next-auth/react";
 
 export default function UserDashboard() {
+  const { data: session, status } = useSession();
   const user_id = "8b61d408-50c7-43b9-a5fc-93ec22740cd7";
+
+  const userDetails = useUserDetailStore((state) => state.user);
+
+  useEffect(() => {
+    console.log("Session data:", session);
+    console.log("User details from store:", userDetails);
+  }, [session, userDetails]);
 
   const { data: complaints, isLoading, isError } = useQuery({
     queryKey: ["complaints", user_id],
