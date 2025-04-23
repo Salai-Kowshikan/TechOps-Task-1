@@ -98,6 +98,8 @@ export const authOptions: NextAuthOptions = {
             });
             userType = 'admin';
           }
+          
+          
 
           if (dbUser) {
             token.id = dbUser.id.toString();

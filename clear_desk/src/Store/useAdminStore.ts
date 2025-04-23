@@ -1,4 +1,3 @@
-// Store/useAdminStore.ts
 import { create } from 'zustand'
 
 type AccessLevel = 'read' | 'read/write'
@@ -11,7 +10,7 @@ interface AdminStore {
 }
 
 export const useAdminStore = create<AdminStore>((set) => ({
-  isSuperAdmin: true,   //need to be false
+  isSuperAdmin: true,
   moderatorCategoryAccess: [],
   setIsSuperAdmin: (value) => set({ isSuperAdmin: value }),
   setModeratorCategoryAccess: (access) => set({ moderatorCategoryAccess: access }),
