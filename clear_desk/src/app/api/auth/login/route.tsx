@@ -10,21 +10,21 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password }: { email: string; password: string } = await req.json()
 
-    // Try to find the user in the `users` table
     let user = await prisma.users.findUnique({ where: { email } })
     let userType = 'user'
 
-    // If not found in users, try to find in the `admin` table
     if (!user) {
       user = await prisma.admin.findUnique({ where: { email } })
       userType = 'admin'
     }
 
-    // If still not found
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    if (!user.password) {
+      return NextResponse.json({ error: 'Password not set for user' }, { status: 400 })
+    }
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
       return NextResponse.json({ error: 'Invalid password' }, { status: 401 })

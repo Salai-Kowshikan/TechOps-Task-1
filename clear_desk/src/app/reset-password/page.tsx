@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { Suspense } from "react";
 
 const resetPasswordSchema = z
   .object({
@@ -24,7 +25,8 @@ type FormData = {
   confirmPassword: string;
 };
 
-export default function ResetPasswordForm() {
+// Separate component that uses useSearchParams
+function ResetPasswordFormContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const {
@@ -60,51 +62,64 @@ export default function ResetPasswordForm() {
   };
 
   return (
-    <>
-      <main className="min-h-screen flex items-center justify-center px-4">
-        <Card className="w-full max-w-md p-6 space-y-6 rounded-xl shadow-lg bg-card border">
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-bold">Reset Password</h1>
-            <p className="text-muted-foreground text-sm">
-              Enter your new password below
+    <Card className="w-full max-w-md p-6 space-y-6 rounded-xl shadow-lg bg-card border">
+      <div className="text-center space-y-2">
+        <h1 className="text-2xl font-bold">Reset Password</h1>
+        <p className="text-muted-foreground text-sm">
+          Enter your new password below
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <Input
+            type="password"
+            {...register("password")}
+            placeholder="New Password"
+            className="bg-background"
+          />
+          {errors.password && (
+            <p className="text-red-400 text-sm mt-1">
+              {errors.password.message}
             </p>
-          </div>
+          )}
+        </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <Input
-                type="password"
-                {...register("password")}
-                placeholder="New Password"
-                className="bg-background"
-              />
-              {errors.password && (
-                <p className="text-red-400 text-sm mt-1">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
+        <div>
+          <Input
+            type="password"
+            {...register("confirmPassword")}
+            placeholder="Confirm Password"
+            className="bg-background"
+          />
+          {errors.confirmPassword && (
+            <p className="text-red-400 text-sm mt-1">
+              {errors.confirmPassword.message}
+            </p>
+          )}
+        </div>
 
-            <div>
-              <Input
-                type="password"
-                {...register("confirmPassword")}
-                placeholder="Confirm Password"
-                className="bg-background"
-              />
-              {errors.confirmPassword && (
-                <p className="text-red-400 text-sm mt-1">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
+        <Button type="submit" className="w-full">
+          Reset Password
+        </Button>
+      </form>
+    </Card>
+  );
+}
 
-            <Button type="submit" className="w-full">
-              Reset Password
-            </Button>
-          </form>
-        </Card>
-      </main>
-    </>
+// Main component that wraps the form with Suspense
+export default function ResetPasswordPage() {
+  return (
+    <main className="min-h-screen flex items-center justify-center px-4">
+      <Suspense
+        fallback={
+          <Card className="w-full max-w-md p-6 space-y-6 rounded-xl shadow-lg bg-card border">
+            <div className="text-center">Loading reset form...</div>
+          </Card>
+        }
+      >
+        <ResetPasswordFormContent />
+      </Suspense>
+    </main>
   );
 }
